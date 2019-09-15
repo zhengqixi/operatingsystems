@@ -7,7 +7,7 @@ namespace NYU {
 namespace OperatingSystems {
     class Parser {
     public:
-        Parser(std::ifstream& parseFile);
+        Parser(std::string fileName);
         ~Parser();
         std::string parseToken();
         bool continueParsing() const;
@@ -16,7 +16,7 @@ namespace OperatingSystems {
 
     private:
         void loadLineParser();
-        std::ifstream& d_file;
+        std::ifstream d_file;
         std::stringstream d_lineParser;
         int d_currLine = 0;
     };

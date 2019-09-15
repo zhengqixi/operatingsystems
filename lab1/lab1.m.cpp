@@ -13,4 +13,5 @@ int main()
     cout << symMe.getSymbol("saddusme") << endl;
     cout << symMe.addSymbol("bigsad", 33) << endl;
     cout << symMe;
+    return 0;
 }

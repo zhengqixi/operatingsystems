@@ -2,15 +2,14 @@
 #include <string>
 namespace NYU {
 namespace OperatingSystems {
-    Parser::Parser(std::ifstream& parseFile)
-        : d_file(parseFile)
+    Parser::Parser(std::string fileName)
+        : d_file(fileName)
     {
         loadLineParser();
     }
     Parser::~Parser()
     {
-        d_file.clear();
-        d_file.seekg(0, std::ios::beg);
+        d_file.close();
     }
     void Parser::loadLineParser()
     {
