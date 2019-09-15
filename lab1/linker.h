@@ -4,13 +4,16 @@ namespace NYU {
 namespace OperatingSystems {
     class Linker {
     public:
-        void link(std::ifstream& input, std::ostream& output);
+        Linker(std::ifstream& input, std::ostream& output);
+        void link();
 
     private:
+        std::ifstream& d_input;
+        std::ostream& d_output;
         // Pass 1
-        SymbolTable generateSymbolTable(std::ifstream& input);
+        SymbolTable generateSymbolTable();
         // Pass 2
-        void generateLinkedFile(std::ostream& output);
+        void generateLinkedFile(const SymbolTable& symTable);
     };
 } // close namespace OperatingSystems
 } // close namespace NYu

@@ -1,7 +1,5 @@
 #include "parser.h"
 #include <string>
-#include <utility>
-#include <vector>
 namespace NYU {
 namespace OperatingSystems {
     Parser::Parser(std::ifstream& parseFile)
@@ -43,12 +41,6 @@ namespace OperatingSystems {
     int Parser::currColumn() const
     {
         return -1;
-    }
-    std::pair<std::string, int> Parser::parseSymbol()
-    {
-    }
-    std::pair<char, int> Parser::parseInstruction()
-    {
     }
 }
 }

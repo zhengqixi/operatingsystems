@@ -1,7 +1,6 @@
 #include <fstream>
 #include <sstream>
 #include <string>
-#include <utility>
 #ifndef PARSER_H
 #define PARSER_H
 namespace NYU {
@@ -14,8 +13,6 @@ namespace OperatingSystems {
         bool continueParsing() const;
         int currLine() const;
         int currColumn() const;
-        std::pair<std::string, int> parseSymbol();
-        std::pair<char, int> parseInstruction();
 
     private:
         void loadLineParser();
