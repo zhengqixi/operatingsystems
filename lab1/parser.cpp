@@ -7,10 +7,6 @@ namespace OperatingSystems {
     {
         loadLineParser();
     }
-    Parser::~Parser()
-    {
-        d_file.close();
-    }
     void Parser::loadLineParser()
     {
         std::string newLine;
@@ -24,7 +20,7 @@ namespace OperatingSystems {
         std::string token;
         d_lineParser >> token;
         // If line parse is empty, get new line, and reload string tokenizer
-        if (d_lineParser.eof()) {
+        if (d_lineParser.eof() && !d_file.eof()) {
             loadLineParser();
         }
         return token;

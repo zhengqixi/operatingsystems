@@ -1,17 +1,15 @@
-#include "SymbolTable.h"
+#include "linker.h"
 #include <iostream>
 
-int main()
+int main(int argc, char* argv[])
 {
     using namespace std;
     using namespace NYU::OperatingSystems;
-    SymbolTable symMe;
-    symMe.addSymbol("bigsad", 12);
-    symMe.addSymbol("niceMe", 13);
-    symMe.addSymbol("omgu", 43);
-    cout << symMe.getSymbol("bigsad") << endl;
-    cout << symMe.getSymbol("saddusme") << endl;
-    cout << symMe.addSymbol("bigsad", 33) << endl;
-    cout << symMe;
+    if (argc != 2) {
+        cout << "Must include exactly one file to parse\n";
+        return -1;
+    }
+    Linker linkFiles(argv[1], cout);
+    linkFiles.link();
     return 0;
 }

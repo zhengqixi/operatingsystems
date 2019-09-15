@@ -8,7 +8,6 @@ namespace OperatingSystems {
     class Parser {
     public:
         Parser(std::string fileName);
-        ~Parser();
         std::string parseToken();
         bool continueParsing() const;
         int currLine() const;

@@ -9,7 +9,7 @@ namespace OperatingSystems {
         void link();
 
     private:
-        std::string fileName d_fileName;
+        std::string d_fileName;
         std::ostream& d_output;
         // Pass 1
         SymbolTable generateSymbolTable();
