@@ -1,14 +1,15 @@
 #include "SymbolTable.h"
-#include <iostream>
+#include <ostream>
+#include <string>
 namespace NYU {
 namespace OperatingSystems {
     class Linker {
     public:
-        Linker(std::ifstream& input, std::ostream& output);
+        Linker(std::string fileName, std::ostream& output);
         void link();
 
     private:
-        std::ifstream& d_input;
+        std::string fileName d_fileName;
         std::ostream& d_output;
         // Pass 1
         SymbolTable generateSymbolTable();
