@@ -6,6 +6,7 @@ namespace OperatingSystems {
     bool SymbolTable::addSymbol(std::string symbol, int absolutePosition)
     {
         if (d_symbolMap.find(symbol) != d_symbolMap.end()) {
+            d_doublyDefined.insert(symbol);
             return false;
         }
         d_symbols.push_back(Symbol(symbol, absolutePosition));
@@ -25,7 +26,11 @@ namespace OperatingSystems {
     {
         os << "Symbol Table\n";
         for (auto const& sym : table.d_symbols) {
-            os << sym.symbol << "=" << sym.absoluteAddress << '\n';
+            os << sym.symbol << "=" << sym.absoluteAddress;
+            if (table.d_doublyDefined.find(sym.symbol) != table.d_doublyDefined.end()) {
+                os << " Error: This variable is multiple times defined; first value use";
+            }
+            os << '\n';
         }
         return os;
     }

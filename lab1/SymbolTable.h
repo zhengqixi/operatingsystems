@@ -1,6 +1,7 @@
 #include <ostream>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <utility>
 #include <vector>
 #ifndef SYMBOL_TABLE_H
@@ -30,7 +31,10 @@ namespace OperatingSystems {
         };
         // Map from the symbol to its position globally
         std::unordered_map<std::string, int> d_symbolMap;
+        // Vector of symbol objects for printing linearlly at the end
         std::vector<Symbol> d_symbols;
+        // Set to store whether or not a symbol has been duplicatly defined
+        std::unordered_set<std::string> d_doublyDefined;
     };
 } // close namespace OperatingSystems
 } // close namespace NYU
