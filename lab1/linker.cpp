@@ -16,14 +16,14 @@ namespace OperatingSystems {
     }
     void Linker::link()
     {
-        bool success = generateSymbolTable();
-        if (!success) {
+        generateSymbolTable();
+        if (!d_success) {
             return;
         }
         generateLinkedFile();
     }
 
-    bool Linker::generateSymbolTable()
+    void Linker::generateSymbolTable()
     {
         int absoluteAddress = 0;
         Parser parse(d_fileName);
@@ -32,24 +32,35 @@ namespace OperatingSystems {
             if (defineSize == -1) {
                 break;
             }
+            if (defineSize > d_maxDefSize) {
+                printError(TOO_MANY_DEF_IN_MODULE, 0, 0);
+                return;
+            }
             for (int i = 0; i != defineSize; ++i) {
                 auto symbol = getSymbol(parse);
                 int absoluteAddr = symbol.second + absoluteAddress;
                 d_symTable.addSymbol(symbol.first, absoluteAddr);
             }
             int useListSize = std::stoi(parseIgnoreEmpty(parse));
+            if (useListSize > d_maxUseSize) {
+                printError(TOO_MANY_USE_IN_MODULE, 0, 0);
+                return;
+            }
             for (int i = 0; i != useListSize; ++i) {
                 // Just parse it for now
                 parseIgnoreEmpty(parse);
             }
             int instructionSize = std::stoi(parseIgnoreEmpty(parse));
+            absoluteAddress += instructionSize;
+            if (absoluteAddress > d_maxIntrSize) {
+                printError(TOO_MANY_INSTR, 0, 0);
+                return;
+            }
             for (int i = 0; i != instructionSize; ++i) {
                 // Just parse it for now
                 getSymbol(parse);
             }
-            absoluteAddress += instructionSize;
         }
-        return true;
     }
     int Linker::getDefineSize(Parser& parse)
     {
@@ -137,6 +148,22 @@ namespace OperatingSystems {
         formatter << std::setw(totalWidth) << std::setfill('0');
         formatter << output;
         return formatter.str();
+    }
+    void Linker::printError(ErrorCode error, int lineNumber, int offset)
+    {
+        d_success = false;
+        const static std::string errors[] = {
+            "NUM_EXPECTED",
+            "SYM_EXPECTED",
+            "ADDR_EXPECTED",
+            "SYM_TOO_LONG",
+            "TOO_MANY_DEF_IN_MODULE",
+            "TOO_MANY_USE_IN_MODULE",
+            "TOO_MANY_INSTR"
+        };
+        d_output << "Parse Error line " << lineNumber;
+        d_output << " offset " << offset;
+        d_output << ": " << errors[error] << '\n';
     }
 } // close namespace OperatingSystems
 } // close namespace NYU

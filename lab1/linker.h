@@ -11,7 +11,10 @@ namespace OperatingSystems {
         void link();
 
     private:
-        enum ErrorCodes { NUM_EXPECTED,
+        const static int d_maxDefSize = 16;
+        const static int d_maxUseSize = 16;
+        const static int d_maxIntrSize = 512;
+        enum ErrorCode { NUM_EXPECTED,
             SYM_EXPECTED,
             ADDR_EXPECTED,
             SYM_TOO_LONG,
@@ -21,8 +24,9 @@ namespace OperatingSystems {
         std::string d_fileName;
         std::ostream& d_output;
         SymbolTable d_symTable;
+        bool d_success = true;
         // Pass 1
-        bool generateSymbolTable();
+        void generateSymbolTable();
         // Pass 2
         void generateLinkedFile();
         // Gets a symbol, which is a string followed by a integer
@@ -34,6 +38,7 @@ namespace OperatingSystems {
         int getDefineSize(Parser& parse);
         // Helper function for 0 padding the total width of a numerical output to totalWidth
         std::string padZeroOutput(int output, int totalWidth);
+        void printError(ErrorCode error, int lineNumber, int offset);
     };
 } // close namespace OperatingSystems
 } // close namespace NYu
