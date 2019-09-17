@@ -26,7 +26,10 @@ namespace OperatingSystems {
         int absoluteAddress = 0;
         Parser parse(d_fileName);
         while (parse.continueParsing()) {
-            int defineSize = std::stoi(parseIgnoreEmpty(parse));
+            int defineSize = getDefineSize(parse);
+            if (defineSize == -1) {
+                break;
+            }
             for (int i = 0; i != defineSize; ++i) {
                 auto symbol = getSymbol(parse);
                 int absoluteAddr = symbol.second + absoluteAddress;
@@ -45,6 +48,14 @@ namespace OperatingSystems {
             absoluteAddress += instructionSize;
         }
         return table;
+    }
+    int Linker::getDefineSize(Parser& parse)
+    {
+        auto defineSizeStr = parseIgnoreEmpty(parse);
+        if (defineSizeStr.empty()) {
+            return -1;
+        }
+        return std::stoi(defineSizeStr);
     }
 
     std::pair<std::string, int> Linker::getSymbol(Parser& parser) const
@@ -74,7 +85,10 @@ namespace OperatingSystems {
         int currentAddress = 0;
         int moduleNumber = 1;
         while (parse.continueParsing()) {
-            int defineSize = std::stoi(parseIgnoreEmpty(parse));
+            int defineSize = getDefineSize(parse);
+            if (defineSize == -1) {
+                break;
+            }
             for (int i = 0; i != defineSize; ++i) {
                 getSymbol(parse);
             }
@@ -105,19 +119,22 @@ namespace OperatingSystems {
                     // Do nothing
                     break;
                 }
-                std::stringstream addressFormatter;
-                addressFormatter << std::setw(4) << std::setfill('0');
-                addressFormatter << currentAddress;
-                std::string addressString;
-                addressFormatter >> addressString;
-                d_output << addressString << ": ";
+                d_output << padZeroOutput(currentAddress, 3);
+                d_output << ": ";
                 int newInstructionCode = opcode * 1000 + operand;
-                d_output << newInstructionCode << '\n';
+                d_output << padZeroOutput(newInstructionCode, 4) << '\n';
                 ++currentAddress;
             }
             absoluteAddress += instructionSize;
             ++moduleNumber;
         }
     }
-}
-}
+    std::string Linker::padZeroOutput(int output, int totalWidth)
+    {
+        std::stringstream formatter;
+        formatter << std::setw(totalWidth) << std::setfill('0');
+        formatter << output;
+        return formatter.str();
+    }
+} // close namespace OperatingSystems
+} // close namespace NYU
