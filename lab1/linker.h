@@ -11,12 +11,20 @@ namespace OperatingSystems {
         void link();
 
     private:
+        enum ErrorCodes { NUM_EXPECTED,
+            SYM_EXPECTED,
+            ADDR_EXPECTED,
+            SYM_TOO_LONG,
+            TOO_MANY_DEF_IN_MODULE,
+            TOO_MANY_USE_IN_MODULE,
+            TOO_MANY_INSTR };
         std::string d_fileName;
         std::ostream& d_output;
+        SymbolTable d_symTable;
         // Pass 1
-        SymbolTable generateSymbolTable();
+        bool generateSymbolTable();
         // Pass 2
-        void generateLinkedFile(const SymbolTable& symTable);
+        void generateLinkedFile();
         // Gets a symbol, which is a string followed by a integer
         // Can also be used for address
         std::pair<std::string, int> getSymbol(Parser& parser) const;

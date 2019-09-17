@@ -16,13 +16,15 @@ namespace OperatingSystems {
     }
     void Linker::link()
     {
-        auto symTable = generateSymbolTable();
-        generateLinkedFile(symTable);
+        bool success = generateSymbolTable();
+        if (!success) {
+            return;
+        }
+        generateLinkedFile();
     }
 
-    SymbolTable Linker::generateSymbolTable()
+    bool Linker::generateSymbolTable()
     {
-        SymbolTable table;
         int absoluteAddress = 0;
         Parser parse(d_fileName);
         while (parse.continueParsing()) {
@@ -33,7 +35,7 @@ namespace OperatingSystems {
             for (int i = 0; i != defineSize; ++i) {
                 auto symbol = getSymbol(parse);
                 int absoluteAddr = symbol.second + absoluteAddress;
-                table.addSymbol(symbol.first, absoluteAddr);
+                d_symTable.addSymbol(symbol.first, absoluteAddr);
             }
             int useListSize = std::stoi(parseIgnoreEmpty(parse));
             for (int i = 0; i != useListSize; ++i) {
@@ -47,7 +49,7 @@ namespace OperatingSystems {
             }
             absoluteAddress += instructionSize;
         }
-        return table;
+        return true;
     }
     int Linker::getDefineSize(Parser& parse)
     {
@@ -76,10 +78,10 @@ namespace OperatingSystems {
         return "";
     }
 
-    void Linker::generateLinkedFile(const SymbolTable& symtable)
+    void Linker::generateLinkedFile()
     {
         Parser parse(d_fileName);
-        d_output << symtable;
+        d_output << d_symTable;
         d_output << "\nMemory Map\n";
         int absoluteAddress = 0;
         int currentAddress = 0;
@@ -110,7 +112,7 @@ namespace OperatingSystems {
                     break;
                 case 'E': {
                     auto useSymbol = useList[operand];
-                    operand = symtable.getSymbol(useSymbol);
+                    operand = d_symTable.getSymbol(useSymbol);
                 } break;
                 case 'I':
                     // Do nothing
