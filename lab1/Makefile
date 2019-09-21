@@ -6,8 +6,8 @@ symboltable.out: symboltable.o
 	g++ -o symboltable.out symboltable.m.cpp symboltable.o 
 symboltable.o:
 	g++ -c symboltable.h symboltable.cpp
-parser.out: parser.o
-	g++ -o parser.out parser.m.cpp parser.o 
+parser.out:
+	g++ -ggdb -o parser.out parser.m.cpp parser.cpp parser.h
 parser.o:
 	g++ -c parser.h parser.cpp
 linker.o:
