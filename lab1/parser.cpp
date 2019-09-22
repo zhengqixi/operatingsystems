@@ -3,8 +3,9 @@
 #include <string>
 namespace NYU {
 namespace OperatingSystems {
-    Parser::Parser(std::string fileName)
+    Parser::Parser(std::string fileName, std::string delim)
         : d_file(fileName)
+        , d_delim(delim)
     {
         nextToken();
     }
@@ -28,26 +29,12 @@ namespace OperatingSystems {
         int wordsCount = 0;
         bool betweenTerm = true;
         for (auto& itr : line) {
-            switch (itr) {
-            case ' ':
+            if (d_delim.find(itr) != std::string::npos) {
                 itr = '\0';
                 betweenTerm = true;
-                break;
-            case '\t':
-                itr = '\0';
-                betweenTerm = true;
-                break;
-            case '\n':
-                // Shouldn't really encouter this since we getline but just in case...
-                itr = '\0';
-                betweenTerm = true;
-                break;
-            default:
-                if (betweenTerm) {
-                    ++wordsCount;
-                    betweenTerm = false;
-                }
-                break;
+            } else if (betweenTerm) {
+                ++wordsCount;
+                betweenTerm = false;
             }
         }
         return wordsCount;

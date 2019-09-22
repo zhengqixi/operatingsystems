@@ -7,7 +7,7 @@ namespace NYU {
 namespace OperatingSystems {
     class Parser {
     public:
-        Parser(std::string fileName);
+        Parser(std::string fileName, std::string delim);
         // Returns a non-empty token, UNLESS the end of the file has been reached
         // Use getToken() instead. Just calls that internally
         std::string parseToken() const;
@@ -33,6 +33,7 @@ namespace OperatingSystems {
         std::ifstream d_file;
         std::string d_currentToken;
         std::string d_currLineString;
+        std::string d_delim;
         // number of words left on the line, excluding current token
         int d_wordsLeftOnLine = 0;
         int d_currLine = 0;

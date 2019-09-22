@@ -8,7 +8,7 @@ int main(int argc, char* argv[])
         cout << "Must include exactly one file to parse\n";
         return -1;
     }
-    Parser fileParser(argv[1]);
+    Parser fileParser(argv[1], "\t\n ");
     while (fileParser.continueParsing()) {
 
         int currLine = fileParser.currTokenLine();
