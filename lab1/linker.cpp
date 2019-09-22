@@ -5,6 +5,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <unordered_set>
 #include <utility>
 #include <vector>
 namespace NYU {
@@ -27,6 +28,7 @@ namespace OperatingSystems {
     void Linker::generateSymbolTable()
     {
         int absoluteAddress = 0;
+        int moduleNumber = 0;
         Parser parse(d_fileName, d_delimiters);
         while (parse.continueParsing()) {
             int defineSize = getNumber(parse);
@@ -37,13 +39,14 @@ namespace OperatingSystems {
                 printError(TOO_MANY_DEF_IN_MODULE, parse.lastTokenLine(), parse.lastTokenColumn());
                 return;
             }
+            // We store them here to check for rule 5, which we need the instruction size first to check
+            std::vector<std::pair<std::string, int>> symbols;
             for (int i = 0; i != defineSize; ++i) {
                 auto symbol = getSymbol(parse);
                 if (!d_success) {
                     return;
                 }
-                int absoluteAddr = symbol.second + absoluteAddress;
-                d_symTable.addSymbol(symbol.first, absoluteAddr);
+                symbols.push_back(symbol);
             }
             int useListSize = getNumber(parse);
             if (!d_success) {
@@ -66,10 +69,19 @@ namespace OperatingSystems {
             if (!d_success) {
                 return;
             }
-            absoluteAddress += instructionSize;
-            if (absoluteAddress > d_maxIntrSize) {
+            if ((absoluteAddress + instructionSize) > d_maxIntrSize) {
                 printError(TOO_MANY_INSTR, parse.lastTokenLine(), parse.lastTokenColumn());
                 return;
+            }
+            // No we can check for rule 5 and add to the symbol table
+            for (auto& symbol : symbols) {
+                if (symbol.second > instructionSize) {
+                    d_output << "Warning: Module: " << moduleNumber << ": ";
+                    d_output << symbol.first << " too big " << symbol.second;
+                    d_output << " (max=" << instructionSize << ") assume zero relative\n";
+                    symbol.second = 0;
+                }
+                d_symTable.addSymbol(symbol.first, symbol.second + absoluteAddress);
             }
             for (int i = 0; i != instructionSize; ++i) {
                 auto instr = getSymbol(parse);
@@ -85,9 +97,11 @@ namespace OperatingSystems {
                     break;
                 default:
                     printError(ADDR_EXPECTED, parse.lastTokenLine(), parse.lastTokenColumn());
-                    break;
+                    return;
                 }
             }
+            absoluteAddress += instructionSize;
+            ++moduleNumber;
         }
     }
     void Linker::generateLinkedFile()
@@ -113,6 +127,7 @@ namespace OperatingSystems {
                 useList.push_back(useSymbol);
                 parse.nextToken();
             }
+            std::unordered_set<std::string> actuallyUsedList;
             int instructionSize = getNumber(parse);
             for (int i = 0; i != instructionSize; ++i) {
                 std::string instrError;
@@ -140,6 +155,8 @@ namespace OperatingSystems {
                             err << "Error: " << useSymbol << " is not defined; zero used";
                             instrError = err.str();
                             operand = 0;
+                        } else {
+                            actuallyUsedList.insert(useSymbol);
                         }
                     }
                 } break;
@@ -172,6 +189,12 @@ namespace OperatingSystems {
                 }
                 d_output << '\n';
                 ++currentAddress;
+            }
+            for (const auto& used : useList) {
+                if (actuallyUsedList.find(used) == actuallyUsedList.end()) {
+                    d_output << "Warning: Module: " << moduleNumber << ": ";
+                    d_output << used << " appeared in the uselist but was not actually used\n";
+                }
             }
             absoluteAddress += instructionSize;
             ++moduleNumber;
