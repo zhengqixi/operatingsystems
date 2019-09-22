@@ -14,6 +14,8 @@ namespace OperatingSystems {
         const static int d_maxDefSize = 16;
         const static int d_maxUseSize = 16;
         const static int d_maxIntrSize = 512;
+        const static int d_maxSymLength = 16;
+        const static std::string d_delimiters;
         enum ErrorCode { NUM_EXPECTED,
             SYM_EXPECTED,
             ADDR_EXPECTED,
@@ -31,14 +33,14 @@ namespace OperatingSystems {
         void generateLinkedFile();
         // Gets a symbol, which is a string followed by a integer
         // Can also be used for address
-        std::pair<std::string, int> getSymbol(Parser& parser) const;
-        // Get the next non-empty token
-        std::string parseIgnoreEmpty(Parser& parser) const;
-        // Get the size of the define section
-        int getDefineSize(Parser& parse);
+        std::pair<std::string, int> getSymbol(Parser& parser);
         // Helper function for 0 padding the total width of a numerical output to totalWidth
         std::string padZeroOutput(int output, int totalWidth);
         void printError(ErrorCode error, int lineNumber, int offset);
+        // Will set d_success to false if not a number
+        // The return value will be -1
+        // If success, then the parser will be set to get the next token
+        int getNumber(Parser& parser);
     };
 } // close namespace OperatingSystems
 } // close namespace NYu

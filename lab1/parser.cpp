@@ -54,6 +54,7 @@ namespace OperatingSystems {
             d_currColumnEnd = 0;
         }
         if (!continueParsing()) {
+            d_currentToken.clear();
             return;
         }
         --d_wordsLeftOnLine;
@@ -61,17 +62,17 @@ namespace OperatingSystems {
         d_currColumnEnd = d_currLineString.find_first_of('\0', d_currColumn);
         d_currentToken = d_currLineString.substr(d_currColumn, d_currColumnEnd - d_currColumn);
     }
-    std::string Parser::getToken() const
+    const std::string& Parser::getToken() const
     {
         return d_currentToken;
     }
-    std::string Parser::parseToken() const
+    const std::string& Parser::parseToken() const
     {
         return d_currentToken;
     }
     int Parser::currTokenColumn() const
     {
-        return d_currColumn;
+        return d_currColumn + 1;
     }
     int Parser::currTokenLine() const
     {

@@ -10,9 +10,9 @@ namespace OperatingSystems {
         Parser(std::string fileName, std::string delim);
         // Returns a non-empty token, UNLESS the end of the file has been reached
         // Use getToken() instead. Just calls that internally
-        std::string parseToken() const;
+        const std::string& parseToken() const;
         // get current token. If an empty string is returned, then end of file has been reached
-        std::string getToken() const;
+        const std::string& getToken() const;
         // advances the token to the next one in the line
         // If line is empty, then gets the next line and sets appropriately
         void nextToken();
