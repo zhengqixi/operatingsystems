@@ -1,7 +1,7 @@
 all: symboltable.o parser.o linker.o
-	g++ -o linker.out lab1.m.cpp symboltable.o parser.o linker.o
+	g++ -o linker lab1.m.cpp symboltable.o parser.o linker.o
 debug:
-	g++ -ggdb -o linker.out lab1.m.cpp symboltable.cpp symboltable.h parser.cpp parser.h linker.cpp linker.h
+	g++ -ggdb -o linker lab1.m.cpp symboltable.cpp symboltable.h parser.cpp parser.h linker.cpp linker.h
 symboltable.out: symboltable.o
 	g++ -o symboltable.out symboltable.m.cpp symboltable.o 
 symboltable.o:

@@ -48,6 +48,8 @@ namespace OperatingSystems {
     }
     void Parser::nextToken()
     {
+        d_lastLine = d_currLine;
+        d_lastColumn = d_currColumn;
         if (d_wordsLeftOnLine == 0) {
             loadLine();
             d_currColumn = 0;
@@ -77,6 +79,14 @@ namespace OperatingSystems {
     int Parser::currTokenLine() const
     {
         return d_currLine;
+    }
+    int Parser::lastTokenColumn() const
+    {
+        return d_lastColumn + 1;
+    }
+    int Parser::lastTokenLine() const
+    {
+        return d_lastLine + 1;
     }
 }
 }

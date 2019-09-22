@@ -34,7 +34,7 @@ namespace OperatingSystems {
                 return;
             }
             if (defineSize > d_maxDefSize) {
-                printError(TOO_MANY_DEF_IN_MODULE, parse.currTokenLine(), parse.currTokenColumn());
+                printError(TOO_MANY_DEF_IN_MODULE, parse.lastTokenLine(), parse.lastTokenColumn());
                 return;
             }
             for (int i = 0; i != defineSize; ++i) {
@@ -50,14 +50,14 @@ namespace OperatingSystems {
                 return;
             }
             if (useListSize > d_maxUseSize) {
-                printError(TOO_MANY_USE_IN_MODULE, parse.currTokenLine(), parse.currTokenColumn());
+                printError(TOO_MANY_USE_IN_MODULE, parse.lastTokenLine(), parse.lastTokenColumn());
                 return;
             }
             for (int i = 0; i != useListSize; ++i) {
                 // Just parse it for now
                 auto token = parse.getToken();
                 if (token.empty()) {
-                    printError(SYM_EXPECTED, parse.currTokenLine(), parse.currTokenColumn());
+                    printError(SYM_EXPECTED, parse.lastTokenLine(), parse.lastTokenColumn());
                     return;
                 }
                 parse.nextToken();
@@ -68,14 +68,24 @@ namespace OperatingSystems {
             }
             absoluteAddress += instructionSize;
             if (absoluteAddress > d_maxIntrSize) {
-                printError(TOO_MANY_INSTR, parse.currTokenLine(), parse.currTokenColumn());
+                printError(TOO_MANY_INSTR, parse.lastTokenLine(), parse.lastTokenColumn());
                 return;
             }
             for (int i = 0; i != instructionSize; ++i) {
-                // Just parse it for now
-                getSymbol(parse);
+                auto instr = getSymbol(parse);
                 if (!d_success) {
                     return;
+                }
+                switch (instr.first[0]) {
+                case 'R':
+                case 'E':
+                case 'I':
+                case 'A':
+                    // If one of these tokens, then not a parse error
+                    break;
+                default:
+                    printError(ADDR_EXPECTED, parse.lastTokenLine(), parse.lastTokenColumn());
+                    break;
                 }
             }
         }
@@ -105,29 +115,62 @@ namespace OperatingSystems {
             }
             int instructionSize = getNumber(parse);
             for (int i = 0; i != instructionSize; ++i) {
+                std::string instrError;
                 auto instruction = getSymbol(parse);
                 int opcode = instruction.second / 1000;
                 int operand = instruction.second % 1000;
                 char addressMode = instruction.first.at(0);
                 switch (addressMode) {
                 case 'R':
-                    operand += absoluteAddress;
+                    if (operand > instructionSize) {
+                        operand = 0;
+                        instrError = "Error: Relative address exceeds module size; zero used";
+                    } else {
+                        operand += absoluteAddress;
+                    }
                     break;
                 case 'E': {
-                    auto useSymbol = useList[operand];
-                    operand = d_symTable.getSymbol(useSymbol);
+                    if (operand > useList.size() - 1) {
+                        instrError = "Error: External address exceeds length of uselist; treated as immediate";
+                    } else {
+                        auto useSymbol = useList[operand];
+                        operand = d_symTable.getSymbol(useSymbol);
+                        if (operand < 0) {
+                            std::stringstream err;
+                            err << "Error: " << useSymbol << " is not defined; zero used";
+                            instrError = err.str();
+                            operand = 0;
+                        }
+                    }
                 } break;
                 case 'I':
+                    if (instruction.second > 9999) {
+                        opcode = 9;
+                        operand = 999;
+                        instrError = "Error: Illegal immediate value; treated as 9999";
+                    }
                     // Do nothing
                     break;
                 case 'A':
-                    // Do nothing
+                    if (operand > d_maxIntrSize) {
+                        operand = 0;
+                        instrError = "Error: Absolute address exceeds machine size. zero used";
+                    }
                     break;
+                }
+                if (opcode > 10 || opcode < 0) {
+                    opcode = 9;
+                    operand = 999;
+                    instrError = "Error: Illegal opcode; treated as 9999";
                 }
                 d_output << padZeroOutput(currentAddress, 3);
                 d_output << ": ";
                 int newInstructionCode = opcode * 1000 + operand;
-                d_output << padZeroOutput(newInstructionCode, 4) << '\n';
+                d_output << padZeroOutput(newInstructionCode, 4);
+                if (!instrError.empty()) {
+                    d_output << " " << instrError;
+                }
+                d_output << '\n';
                 ++currentAddress;
             }
             absoluteAddress += instructionSize;
