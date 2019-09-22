@@ -31,7 +31,7 @@ namespace OperatingSystems {
         while (parse.continueParsing()) {
             int defineSize = getNumber(parse);
             if (!d_success) {
-                break;
+                return;
             }
             if (defineSize > d_maxDefSize) {
                 printError(TOO_MANY_DEF_IN_MODULE, parse.currTokenLine(), parse.currTokenColumn());
@@ -40,27 +40,32 @@ namespace OperatingSystems {
             for (int i = 0; i != defineSize; ++i) {
                 auto symbol = getSymbol(parse);
                 if (!d_success) {
-                    break;
+                    return;
                 }
                 int absoluteAddr = symbol.second + absoluteAddress;
                 d_symTable.addSymbol(symbol.first, absoluteAddr);
             }
-            if (d_success) {
-                break;
-            }
             int useListSize = getNumber(parse);
+            if (!d_success) {
+                return;
+            }
             if (useListSize > d_maxUseSize) {
                 printError(TOO_MANY_USE_IN_MODULE, parse.currTokenLine(), parse.currTokenColumn());
                 return;
             }
             for (int i = 0; i != useListSize; ++i) {
                 // Just parse it for now
+                auto token = parse.getToken();
+                if (token.empty()) {
+                    printError(SYM_EXPECTED, parse.currTokenLine(), parse.currTokenColumn());
+                    return;
+                }
                 parse.nextToken();
             }
-            if (d_success) {
-                break;
-            }
             int instructionSize = getNumber(parse);
+            if (!d_success) {
+                return;
+            }
             absoluteAddress += instructionSize;
             if (absoluteAddress > d_maxIntrSize) {
                 printError(TOO_MANY_INSTR, parse.currTokenLine(), parse.currTokenColumn());
@@ -69,12 +74,9 @@ namespace OperatingSystems {
             for (int i = 0; i != instructionSize; ++i) {
                 // Just parse it for now
                 getSymbol(parse);
-                if (d_success) {
-                    break;
+                if (!d_success) {
+                    return;
                 }
-            }
-            if (d_success) {
-                break;
             }
         }
     }
@@ -136,12 +138,10 @@ namespace OperatingSystems {
     {
         auto token = parser.getToken();
         if (token.empty()) {
-            d_success = false;
             printError(SYM_EXPECTED, parser.currTokenLine(), parser.currTokenColumn());
             return std::pair<std::string, int>("", -1);
         }
         if (token.length() > d_maxSymLength) {
-            d_success = false;
             printError(SYM_TOO_LONG, parser.currTokenLine(), parser.currTokenColumn());
             return std::pair<std::string, int>("", -1);
         }
@@ -180,14 +180,13 @@ namespace OperatingSystems {
         int num = -1;
         auto token = parser.getToken();
         if (token.empty()) {
-            d_success = false;
+            printError(NUM_EXPECTED, parser.currTokenLine(), parser.currTokenColumn());
             return num;
         }
         try {
             num = std::stoi(token);
             parser.nextToken();
         } catch (const std::invalid_argument& e) {
-            d_success = false;
             printError(NUM_EXPECTED, parser.currTokenLine(), parser.currTokenColumn());
         }
         return num;
