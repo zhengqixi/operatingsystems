@@ -3,13 +3,13 @@
 #include <string>
 namespace NYU {
 namespace OperatingSystems {
-    bool SymbolTable::addSymbol(std::string symbol, int absolutePosition)
+    bool SymbolTable::addSymbol(std::string symbol, int absolutePosition, int moduleNumber)
     {
         if (d_symbolMap.find(symbol) != d_symbolMap.end()) {
             d_doublyDefined.insert(symbol);
             return false;
         }
-        d_symbols.push_back(Symbol(symbol, absolutePosition));
+        d_symbols.push_back(Symbol(symbol, absolutePosition, moduleNumber));
         d_symbolMap[symbol] = absolutePosition;
         return true;
     }
@@ -21,6 +21,10 @@ namespace OperatingSystems {
             return -1;
         }
         return value->second;
+    }
+    const std::vector<Symbol>& SymbolTable::allSymbols() const
+    {
+        return d_symbols;
     }
     std::ostream& operator<<(std::ostream& os, const SymbolTable& table)
     {

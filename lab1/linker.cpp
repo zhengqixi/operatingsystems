@@ -81,7 +81,7 @@ namespace OperatingSystems {
                     d_output << " (max=" << instructionSize << ") assume zero relative\n";
                     symbol.second = 0;
                 }
-                d_symTable.addSymbol(symbol.first, symbol.second + absoluteAddress);
+                d_symTable.addSymbol(symbol.first, symbol.second + absoluteAddress, moduleNumber);
             }
             for (int i = 0; i != instructionSize; ++i) {
                 auto instr = getSymbol(parse);
@@ -112,6 +112,7 @@ namespace OperatingSystems {
         int absoluteAddress = 0;
         int currentAddress = 0;
         int moduleNumber = 1;
+        std::unordered_set<std::string> masterActuallyUsedList;
         while (parse.continueParsing()) {
             int defineSize = getNumber(parse);
             if (defineSize == -1) {
@@ -189,6 +190,7 @@ namespace OperatingSystems {
                 }
                 d_output << '\n';
                 ++currentAddress;
+                masterActuallyUsedList.insert(actuallyUsedList.begin(), actuallyUsedList.end());
             }
             for (const auto& used : useList) {
                 if (actuallyUsedList.find(used) == actuallyUsedList.end()) {
@@ -198,6 +200,12 @@ namespace OperatingSystems {
             }
             absoluteAddress += instructionSize;
             ++moduleNumber;
+        }
+        for (const auto& sym : d_symTable.allSymbols()) {
+            if (masterActuallyUsedList.find(sym.symbol) == masterActuallyUsedList.end()) {
+                d_output << "Warning: Module " << sym.moduleNumber << ": " << sym.symbol;
+                d_output << " was defined but never used\n";
+            }
         }
     }
     std::pair<std::string, int> Linker::getSymbol(Parser& parser)
