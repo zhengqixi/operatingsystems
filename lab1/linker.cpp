@@ -1,6 +1,6 @@
 #include "linker.h"
-#include "SymbolTable.h"
 #include "parser.h"
+#include "symboltable.h"
 #include <iomanip>
 #include <iostream>
 #include <sstream>

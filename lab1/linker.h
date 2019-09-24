@@ -1,5 +1,5 @@
-#include "SymbolTable.h"
 #include "parser.h"
+#include "symboltable.h"
 #include <ostream>
 #include <string>
 #include <utility>

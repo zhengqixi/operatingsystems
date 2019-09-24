@@ -1,4 +1,4 @@
-#include "SymbolTable.h"
+#include "symboltable.h"
 #include <ostream>
 #include <string>
 namespace NYU {
