@@ -86,7 +86,7 @@ namespace OperatingSystems {
     }
     int Parser::lastTokenLine() const
     {
-        return d_lastLine + 1;
+        return d_lastLine;
     }
 }
 }
