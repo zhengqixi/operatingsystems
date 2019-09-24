@@ -41,6 +41,8 @@ namespace OperatingSystems {
         // The return value will be -1
         // If success, then the parser will be set to get the next token
         int getNumber(Parser& parser);
+        // Re
+        bool isValidOpcode(int& opcode, int& operand, std::string& errMsg) const;
     };
 } // close namespace OperatingSystems
 } // close namespace NYu

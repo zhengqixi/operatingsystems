@@ -26,7 +26,7 @@ namespace OperatingSystems {
         bool addSymbol(std::string symbol, int absolutePosition, int moduleNumber);
         // Looks up a symbol and returns its address.
         // If the symbol does not exist, -1 is returned
-        int getSymbol(std::string symbol) const;
+        int getSymbol(const std::string& symbol) const;
         // Gets ALL the symbols inserted.
         const std::vector<Symbol>& allSymbols() const;
         // Ostream& overload to print

@@ -28,7 +28,7 @@ namespace OperatingSystems {
     void Linker::generateSymbolTable()
     {
         int absoluteAddress = 0;
-        int moduleNumber = 0;
+        int moduleNumber = 1;
         Parser parse(d_fileName, d_delimiters);
         while (parse.continueParsing()) {
             int defineSize = getNumber(parse);
@@ -76,7 +76,7 @@ namespace OperatingSystems {
             // No we can check for rule 5 and add to the symbol table
             for (auto& symbol : symbols) {
                 if (symbol.second > instructionSize) {
-                    d_output << "Warning: Module: " << moduleNumber << ": ";
+                    d_output << "Warning: Module " << moduleNumber << ": ";
                     d_output << symbol.first << " too big " << symbol.second;
                     d_output << " (max=" << instructionSize << ") assume zero relative\n";
                     symbol.second = 0;
@@ -104,6 +104,16 @@ namespace OperatingSystems {
             ++moduleNumber;
         }
     }
+    bool Linker::isValidOpcode(int& opcode, int& operand, std::string& errMsg) const
+    {
+        if (opcode > 9 || opcode < 0) {
+            opcode = 9;
+            operand = 999;
+            errMsg = "Error: Illegal opcode; treated as 9999";
+            return false;
+        }
+        return true;
+    }
     void Linker::generateLinkedFile()
     {
         Parser parse(d_fileName, d_delimiters);
@@ -128,6 +138,7 @@ namespace OperatingSystems {
                 useList.push_back(useSymbol);
                 parse.nextToken();
             }
+            // Get ready for non-mentioned rule differntiation
             std::unordered_set<std::string> actuallyUsedList;
             int instructionSize = getNumber(parse);
             for (int i = 0; i != instructionSize; ++i) {
@@ -138,14 +149,20 @@ namespace OperatingSystems {
                 char addressMode = instruction.first.at(0);
                 switch (addressMode) {
                 case 'R':
+                    if (!isValidOpcode(opcode, operand, instrError)) {
+                        break;
+                    }
                     if (operand > instructionSize) {
-                        operand = 0;
+                        operand = absoluteAddress;
                         instrError = "Error: Relative address exceeds module size; zero used";
                     } else {
                         operand += absoluteAddress;
                     }
                     break;
                 case 'E': {
+                    if (!isValidOpcode(opcode, operand, instrError)) {
+                        break;
+                    }
                     if (operand > useList.size() - 1) {
                         instrError = "Error: External address exceeds length of uselist; treated as immediate";
                     } else {
@@ -162,6 +179,9 @@ namespace OperatingSystems {
                     }
                 } break;
                 case 'I':
+                    // We DO NOT actually check the opcode here because this immediate value warning takes priority
+                    // This is not actually documented anywhere it just is there if you check the reference implementation
+                    // UGHHHHHHHHHHHH WHAT THE FUCK
                     if (instruction.second > 9999) {
                         opcode = 9;
                         operand = 999;
@@ -170,16 +190,14 @@ namespace OperatingSystems {
                     // Do nothing
                     break;
                 case 'A':
+                    if (!isValidOpcode(opcode, operand, instrError)) {
+                        break;
+                    }
                     if (operand > d_maxIntrSize) {
                         operand = 0;
-                        instrError = "Error: Absolute address exceeds machine size. zero used";
+                        instrError = "Error: Absolute address exceeds machine size; zero used";
                     }
                     break;
-                }
-                if (opcode > 10 || opcode < 0) {
-                    opcode = 9;
-                    operand = 999;
-                    instrError = "Error: Illegal opcode; treated as 9999";
                 }
                 d_output << padZeroOutput(currentAddress, 3);
                 d_output << ": ";
@@ -194,7 +212,7 @@ namespace OperatingSystems {
             }
             for (const auto& used : useList) {
                 if (actuallyUsedList.find(used) == actuallyUsedList.end()) {
-                    d_output << "Warning: Module: " << moduleNumber << ": ";
+                    d_output << "Warning: Module " << moduleNumber << ": ";
                     d_output << used << " appeared in the uselist but was not actually used\n";
                 }
             }

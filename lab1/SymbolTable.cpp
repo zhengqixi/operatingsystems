@@ -14,7 +14,7 @@ namespace OperatingSystems {
         return true;
     }
 
-    int SymbolTable::getSymbol(std::string symbol) const
+    int SymbolTable::getSymbol(const std::string& symbol) const
     {
         auto value = d_symbolMap.find(symbol);
         if (value == d_symbolMap.end()) {
@@ -32,7 +32,7 @@ namespace OperatingSystems {
         for (auto const& sym : table.d_symbols) {
             os << sym.symbol << "=" << sym.absoluteAddress;
             if (table.d_doublyDefined.find(sym.symbol) != table.d_doublyDefined.end()) {
-                os << " Error: This variable is multiple times defined; first value use";
+                os << " Error: This variable is multiple times defined; first value used";
             }
             os << '\n';
         }
