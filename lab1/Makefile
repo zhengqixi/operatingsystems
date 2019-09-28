@@ -14,5 +14,5 @@ linker.o:
 	g++ -c linker.h linker.cpp
 clean:
 	rm *.out *.o *.gch linker
-lab1.tar:
+zip:
 	tar -cvf lab1.tar *.cpp *.h Makefile README.md
