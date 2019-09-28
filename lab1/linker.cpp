@@ -1,6 +1,7 @@
 #include "linker.h"
 #include "parser.h"
 #include "symboltable.h"
+#include <cctype>
 #include <iomanip>
 #include <iostream>
 #include <sstream>
@@ -296,12 +297,12 @@ namespace OperatingSystems {
             printError(NUM_EXPECTED, parser.eofLine(), parser.eofColumn());
             return num;
         }
-        try {
-            num = std::stoi(token);
-            parser.nextToken();
-        } catch (const std::invalid_argument& e) {
+        if (!isNumber(token)) {
             printError(NUM_EXPECTED, parser.currTokenLine(), parser.currTokenColumn());
+            return num;
         }
+        num = std::stoi(token);
+        parser.nextToken();
         return num;
     }
     bool Linker::isValidSymbol(const std::string& symbol) const
@@ -314,6 +315,15 @@ namespace OperatingSystems {
         }
         for (char s : symbol) {
             if (!std::isalnum(s)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    bool Linker::isNumber(const std::string& symbol) const
+    {
+        for (char s : symbol) {
+            if (!std::isdigit(s)) {
                 return false;
             }
         }

@@ -45,6 +45,7 @@ namespace OperatingSystems {
         // Re
         bool isValidOpcode(int& opcode, int& operand, std::string& errMsg) const;
         bool isValidSymbol(const std::string& symbol) const;
+        bool isNumber(const std::string& symbol) const;
     };
 } // close namespace OperatingSystems
 } // close namespace NYu
