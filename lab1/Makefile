@@ -15,4 +15,4 @@ linker.o:
 clean:
 	rm *.out *.o *.gch linker
 lab1.tar:
-	tar -cvf lab1.tar *.cpp *.h Makefile
+	tar -cvf lab1.tar *.cpp *.h Makefile README.md
