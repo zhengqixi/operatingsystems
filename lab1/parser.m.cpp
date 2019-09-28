@@ -17,8 +17,15 @@ int main(int argc, char* argv[])
         cout << "Token: " << token;
         cout << " on line: " << currLine;
         cout << " and column: " << currColumn;
+        cout << " continue parsing? " << fileParser.continueParsing();
         cout << '\n';
         fileParser.nextToken();
     }
+    cout << "Last line: " << fileParser.lastTokenLine();
+    cout << " Last column: " << fileParser.lastTokenColumn();
+    cout << '\n';
+    cout << "Current line: " << fileParser.currTokenLine();
+    cout << "Current column: " << fileParser.currTokenColumn();
+    cout << '\n';
     return 0;
 }

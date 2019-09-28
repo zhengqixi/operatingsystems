@@ -21,6 +21,8 @@ namespace OperatingSystems {
         int currTokenColumn() const;
         int lastTokenLine() const;
         int lastTokenColumn() const;
+        int eofLine() const;
+        int eofColumn() const;
 
     private:
         // Gets a new line that has at least one valid symbol in it
@@ -43,6 +45,7 @@ namespace OperatingSystems {
         int d_currColumnEnd = 0;
         int d_lastColumn = 0;
         int d_lastLine = 0;
+        int d_eofColumn = 0;
     };
 } // close namespace operating systems
 } // close namespace nyu

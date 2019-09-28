@@ -11,10 +11,10 @@ namespace OperatingSystems {
     }
     void Parser::loadLine()
     {
-        while (!d_file.eof()) {
+        std::string line;
+        while (std::getline(d_file, line)) {
+            d_eofColumn = line.length();
             ++d_currLine;
-            std::string line;
-            std::getline(d_file, line);
             int wordsCount = manualTokenize(line);
             if (wordsCount == 0) {
                 continue;
@@ -87,6 +87,14 @@ namespace OperatingSystems {
     int Parser::lastTokenLine() const
     {
         return d_lastLine;
+    }
+    int Parser::eofColumn() const
+    {
+        return d_eofColumn + 1;
+    }
+    int Parser::eofLine() const
+    {
+        return d_currLine;
     }
 }
 }

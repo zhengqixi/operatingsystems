@@ -57,10 +57,13 @@ namespace OperatingSystems {
                 return;
             }
             for (int i = 0; i != useListSize; ++i) {
-                // Just parse it for now
                 auto token = parse.getToken();
                 if (token.empty()) {
-                    printError(SYM_EXPECTED, parse.lastTokenLine(), parse.lastTokenColumn());
+                    printError(SYM_EXPECTED, parse.eofLine(), parse.eofColumn());
+                    return;
+                }
+                if (!isValidSymbol(token)) {
+                    printError(SYM_EXPECTED, parse.currTokenLine(), parse.currTokenColumn());
                     return;
                 }
                 parse.nextToken();
@@ -78,25 +81,14 @@ namespace OperatingSystems {
                 if (symbol.second > instructionSize) {
                     d_output << "Warning: Module " << moduleNumber << ": ";
                     d_output << symbol.first << " too big " << symbol.second;
-                    d_output << " (max=" << instructionSize << ") assume zero relative\n";
+                    d_output << " (max=" << (instructionSize - 1) << ") assume zero relative\n";
                     symbol.second = 0;
                 }
                 d_symTable.addSymbol(symbol.first, symbol.second + absoluteAddress, moduleNumber);
             }
             for (int i = 0; i != instructionSize; ++i) {
-                auto instr = getSymbol(parse);
+                auto instr = getInstr(parse);
                 if (!d_success) {
-                    return;
-                }
-                switch (instr.first[0]) {
-                case 'R':
-                case 'E':
-                case 'I':
-                case 'A':
-                    // If one of these tokens, then not a parse error
-                    break;
-                default:
-                    printError(ADDR_EXPECTED, parse.lastTokenLine(), parse.lastTokenColumn());
                     return;
                 }
             }
@@ -143,10 +135,10 @@ namespace OperatingSystems {
             int instructionSize = getNumber(parse);
             for (int i = 0; i != instructionSize; ++i) {
                 std::string instrError;
-                auto instruction = getSymbol(parse);
+                auto instruction = getInstr(parse);
                 int opcode = instruction.second / 1000;
                 int operand = instruction.second % 1000;
-                char addressMode = instruction.first.at(0);
+                char addressMode = instruction.first;
                 switch (addressMode) {
                 case 'R':
                     if (!isValidOpcode(opcode, operand, instrError)) {
@@ -173,9 +165,8 @@ namespace OperatingSystems {
                             err << "Error: " << useSymbol << " is not defined; zero used";
                             instrError = err.str();
                             operand = 0;
-                        } else {
-                            actuallyUsedList.insert(useSymbol);
                         }
+                        actuallyUsedList.insert(useSymbol);
                     }
                 } break;
                 case 'I':
@@ -230,11 +221,11 @@ namespace OperatingSystems {
     {
         auto token = parser.getToken();
         if (token.empty()) {
-            printError(SYM_EXPECTED, parser.currTokenLine(), parser.currTokenColumn());
+            printError(SYM_EXPECTED, parser.eofLine(), parser.eofColumn());
             return std::pair<std::string, int>("", -1);
         }
-        if (token.length() > d_maxSymLength) {
-            printError(SYM_TOO_LONG, parser.currTokenLine(), parser.currTokenColumn());
+        if (!isValidSymbol(token)) {
+            printError(SYM_EXPECTED, parser.currTokenLine(), parser.currTokenColumn());
             return std::pair<std::string, int>("", -1);
         }
         parser.nextToken();
@@ -243,6 +234,36 @@ namespace OperatingSystems {
             return std::pair<std::string, int>("", -1);
         }
         return std::pair<std::string, int>(token, num);
+    }
+    std::pair<char, int> Linker::getInstr(Parser& parser)
+    {
+        auto token = parser.getToken();
+        if (token.empty()) {
+            printError(ADDR_EXPECTED, parser.eofLine(), parser.eofColumn());
+            return std::pair<char, int>('\0', -1);
+        }
+        if (token.length() > 1) {
+            printError(ADDR_EXPECTED, parser.currTokenLine(), parser.currTokenColumn());
+            return std::pair<char, int>('\0', -1);
+        }
+        char instr = token[0];
+        switch (instr) {
+        case 'R':
+        case 'E':
+        case 'I':
+        case 'A':
+            // If one of these tokens, then not a parse error
+            break;
+        default:
+            printError(ADDR_EXPECTED, parser.lastTokenLine(), parser.lastTokenColumn());
+            return std::pair<char, int>('\0', -1);
+        }
+        parser.nextToken();
+        int num = getNumber(parser);
+        if (!d_success) {
+            return std::pair<char, int>('\0', -1);
+        }
+        return std::pair<char, int>(instr, num);
     }
     std::string Linker::padZeroOutput(int output, int totalWidth)
     {
@@ -272,7 +293,7 @@ namespace OperatingSystems {
         int num = -1;
         auto token = parser.getToken();
         if (token.empty()) {
-            printError(NUM_EXPECTED, parser.currTokenLine(), parser.currTokenColumn());
+            printError(NUM_EXPECTED, parser.eofLine(), parser.eofColumn());
             return num;
         }
         try {
@@ -282,6 +303,21 @@ namespace OperatingSystems {
             printError(NUM_EXPECTED, parser.currTokenLine(), parser.currTokenColumn());
         }
         return num;
+    }
+    bool Linker::isValidSymbol(const std::string& symbol) const
+    {
+        if (symbol.length() > d_maxSymLength) {
+            return false;
+        }
+        if (!std::isalpha(symbol[0])) {
+            return false;
+        }
+        for (char s : symbol) {
+            if (!std::isalnum(s)) {
+                return false;
+            }
+        }
+        return true;
     }
 } // close namespace OperatingSystems
 } // close namespace NYU

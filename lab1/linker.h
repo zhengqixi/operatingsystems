@@ -32,8 +32,9 @@ namespace OperatingSystems {
         // Pass 2
         void generateLinkedFile();
         // Gets a symbol, which is a string followed by a integer
-        // Can also be used for address
         std::pair<std::string, int> getSymbol(Parser& parser);
+        // Gets an address
+        std::pair<char, int> getInstr(Parser& parser);
         // Helper function for 0 padding the total width of a numerical output to totalWidth
         std::string padZeroOutput(int output, int totalWidth);
         void printError(ErrorCode error, int lineNumber, int offset);
@@ -43,6 +44,7 @@ namespace OperatingSystems {
         int getNumber(Parser& parser);
         // Re
         bool isValidOpcode(int& opcode, int& operand, std::string& errMsg) const;
+        bool isValidSymbol(const std::string& symbol) const;
     };
 } // close namespace OperatingSystems
 } // close namespace NYu
