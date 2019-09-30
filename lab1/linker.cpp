@@ -257,7 +257,7 @@ namespace OperatingSystems {
             // If one of these tokens, then not a parse error
             break;
         default:
-            printError(ADDR_EXPECTED, parser.lastTokenLine(), parser.lastTokenColumn());
+            printError(ADDR_EXPECTED, parser.currTokenLine(), parser.currTokenColumn());
             return std::pair<char, int>('\0', -1);
         }
         parser.nextToken();
