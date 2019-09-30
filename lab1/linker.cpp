@@ -156,7 +156,8 @@ namespace OperatingSystems {
                     if (!isValidOpcode(opcode, operand, instrError)) {
                         break;
                     }
-                    if (operand > useList.size() - 1) {
+                    int useListIndex = useList.size() - 1;
+                    if (operand > useListIndex) {
                         instrError = "Error: External address exceeds length of uselist; treated as immediate";
                     } else {
                         auto useSymbol = useList[operand];
