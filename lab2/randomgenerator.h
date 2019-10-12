@@ -1,0 +1,3 @@
+#ifndef RANDOM_GENERATOR_H
+#define RANDOM_GENERATOR_H
+#endif
