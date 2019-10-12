@@ -6,4 +6,5 @@
 *.tar
 *.zip
 lab1/lab1samples/*
+lab2/lab2_assign/*
 *.vscode
