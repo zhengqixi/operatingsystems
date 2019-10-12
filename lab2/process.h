@@ -1,5 +1,6 @@
 #ifndef PROCESS_H
 #define PROCESS_H
+#include <memory>
 namespace NYU {
 namespace OperatingSystems {
     enum PROCESS_STATES {
@@ -11,7 +12,8 @@ namespace OperatingSystems {
     typedef unsigned int PID;
     class Process {
     public:
-        Process(PID pid, int cpuTime, int cpuBurst, int ioBurst);
+        // Static method for creating processes
+        static std::unique_ptr<Process> createProcess(int cpuTime, int cpuBurst, int ioBurst);
         // Get process ID
         PID pid() const;
         // Get total remaining CPU time
@@ -32,6 +34,7 @@ namespace OperatingSystems {
         void setState(PROCESS_STATES newState);
 
     private:
+        Process(PID pid, int cpuTime, int cpuBurst, int ioBurst);
         PID d_pid;
         PROCESS_STATES d_currState = CREATED;
         PROCESS_STATES d_nextState = READY;
