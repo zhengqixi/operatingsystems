@@ -5,20 +5,20 @@ int main()
 {
     using namespace NYU::OperatingSystems;
     EventQueue<int> queue;
-    queue.AddEvent(4, 4);
-    queue.AddEvent(4, 5);
-    queue.AddEvent(9, 9);
-    queue.AddEvent(10, 10);
-    queue.AddEvent(6, 6);
-    queue.AddEvent(7, 7);
-    queue.AddEvent(1, 1);
-    queue.AddEvent(1, 2);
-    queue.AddEvent(3, 3);
-    queue.AddEvent(8, 8);
-    while (queue.Continue()) {
-        auto event = queue.PopEvent();
-        std::cout << "Timestamp: " << event.TimeStamp();
-        std::cout << " Data: " << event.Data() << '\n';
+    queue.addEvent(4, 4);
+    queue.addEvent(4, 5);
+    queue.addEvent(9, 9);
+    queue.addEvent(10, 10);
+    queue.addEvent(6, 6);
+    queue.addEvent(7, 7);
+    queue.addEvent(1, 1);
+    queue.addEvent(1, 2);
+    queue.addEvent(3, 3);
+    queue.addEvent(8, 8);
+    while (queue.hasEvents()) {
+        auto event = queue.popEvent();
+        std::cout << "Timestamp: " << event.timeStamp();
+        std::cout << " Data: " << event.data() << '\n';
     }
     return 0;
 }

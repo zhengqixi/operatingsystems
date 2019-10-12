@@ -8,9 +8,12 @@ namespace OperatingSystems {
     class Event {
     public:
         Event(eID id, eTime timeStamp, T data);
-        eID EventID() const;
-        eTime TimeStamp() const;
-        T Data() const;
+        // Get the event ID
+        eID eventID() const;
+        // Get the event time stamp
+        eTime timeStamp() const;
+        // Get the event data
+        T data() const;
 
     private:
         eID d_eventID;
@@ -25,17 +28,17 @@ namespace OperatingSystems {
     {
     }
     template <typename T>
-    eID Event<T>::EventID() const
+    eID Event<T>::eventID() const
     {
         return d_eventID;
     }
     template <typename T>
-    eTime Event<T>::TimeStamp() const
+    eTime Event<T>::timeStamp() const
     {
         return d_timeStamp;
     }
     template <typename T>
-    T Event<T>::Data() const
+    T Event<T>::data() const
     {
         return d_data;
     }
