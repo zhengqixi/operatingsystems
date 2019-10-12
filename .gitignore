@@ -4,3 +4,6 @@
 *.pdf
 *.Z
 *.tar
+*.zip
+lab1/lab1samples/*
+*.vscode
