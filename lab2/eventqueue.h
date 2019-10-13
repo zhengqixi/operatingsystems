@@ -10,10 +10,10 @@ class EventComparator {
 public:
     bool operator()(const Event<T>& a, const Event<T>& b) const
     {
-        if (a.TimeStamp() == b.TimeStamp()) {
-            return a.EventID() > b.EventID();
+        if (a.timeStamp() == b.timeStamp()) {
+            return a.eventID() > b.eventID();
         }
-        return a.TimeStamp() > b.TimeStamp();
+        return a.timeStamp() > b.timeStamp();
     }
 };
 }
