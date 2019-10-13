@@ -12,7 +12,7 @@ namespace OperatingSystems {
     std::shared_ptr<Process> Process::createProcess(int cpuTime, int cpuBurst, int ioBurst)
     {
         static PID newPid = 0;
-        auto newProcess = std::shared_ptr<Process>(new Process(newPid, cpuTime, cpuBurst, ioBurst));
+        auto newProcess = std::make_shared<Process>(newPid, cpuTime, cpuBurst, ioBurst);
         ++newPid;
         return newProcess;
     }

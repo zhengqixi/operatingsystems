@@ -89,7 +89,7 @@ namespace OperatingSystems {
     template <typename T>
     void EventQueue<T>::addEvent(eTime timeStamp, T data)
     {
-        d_queue.push_back(Event<T>(d_nextValidID, timeStamp, std::move(data)));
+        d_queue.push_back(std::move(Event<T>(d_nextValidID, timeStamp, std::move(data))));
         std::push_heap(d_queue.begin(), d_queue.end(), EventComparator<T>());
         ++d_nextValidID;
     }

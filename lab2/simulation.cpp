@@ -3,6 +3,7 @@
 #include <ostream>
 #include <sstream>
 #include <string>
+#include <utility>
 namespace NYU {
 namespace OperatingSystems {
     Simulation::Simulation(std::ifstream& processFile, std::ifstream& randomFile, AbstractScheduler& scheduler)
@@ -33,7 +34,7 @@ namespace OperatingSystems {
             string ioBurst;
             lineParser >> timestamp >> cpuTime >> cpuBurst >> ioBurst;
             d_eventQueue.addEvent(stoi(timestamp),
-                Process::createProcess(stoi(cpuTime), stoi(cpuBurst), stoi(ioBurst)));
+                std::move(Process::createProcess(stoi(cpuTime), stoi(cpuBurst), stoi(ioBurst))));
         }
     }
 }

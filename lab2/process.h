@@ -32,9 +32,9 @@ namespace OperatingSystems {
         void setNextState(PROCESS_STATES nextState);
         // Sets the current state
         void setState(PROCESS_STATES newState);
+        Process(PID pid, int cpuTime, int cpuBurst, int ioBurst);
 
     private:
-        Process(PID pid, int cpuTime, int cpuBurst, int ioBurst);
         PID d_pid;
         PROCESS_STATES d_currState = CREATED;
         PROCESS_STATES d_nextState = READY;
