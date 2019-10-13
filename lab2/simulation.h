@@ -19,7 +19,7 @@ namespace OperatingSystems {
     private:
         AbstractScheduler& d_scheduler;
         void initializeEventQueue(std::ifstream& processFile);
-        EventQueue<std::unique_ptr<Process>> d_eventQueue;
+        EventQueue<std::shared_ptr<Process>> d_eventQueue;
         RandomGenerator d_randomGenerator;
         eTime d_currTime = 0;
         PID d_currProcess = -1;

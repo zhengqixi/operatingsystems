@@ -9,10 +9,10 @@ namespace OperatingSystems {
         , d_ioBurst(ioBurst)
     {
     }
-    std::unique_ptr<Process> Process::createProcess(int cpuTime, int cpuBurst, int ioBurst)
+    std::shared_ptr<Process> Process::createProcess(int cpuTime, int cpuBurst, int ioBurst)
     {
         static PID newPid = 0;
-        auto newProcess = std::unique_ptr<Process>(new Process(newPid, cpuTime, cpuBurst, ioBurst));
+        auto newProcess = std::shared_ptr<Process>(new Process(newPid, cpuTime, cpuBurst, ioBurst));
         ++newPid;
         return newProcess;
     }

@@ -13,7 +13,7 @@ namespace OperatingSystems {
     class Process {
     public:
         // Static method for creating processes
-        static std::unique_ptr<Process> createProcess(int cpuTime, int cpuBurst, int ioBurst);
+        static std::shared_ptr<Process> createProcess(int cpuTime, int cpuBurst, int ioBurst);
         // Get process ID
         PID pid() const;
         // Get total remaining CPU time
