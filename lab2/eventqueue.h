@@ -3,20 +3,6 @@
 #include "event.h"
 #include <queue>
 #include <vector>
-namespace {
-using namespace NYU::OperatingSystems;
-template <typename T>
-class EventComparator {
-public:
-    bool operator()(const Event<T>& a, const Event<T>& b) const
-    {
-        if (a.timeStamp() == b.timeStamp()) {
-            return a.eventID() > b.eventID();
-        }
-        return a.timeStamp() > b.timeStamp();
-    }
-};
-}
 namespace NYU {
 namespace OperatingSystems {
     template <typename T>
@@ -33,6 +19,17 @@ namespace OperatingSystems {
 
     private:
         eID d_nextValidID = 0;
+        template <typename InnerT>
+        class EventComparator {
+        public:
+            bool operator()(const Event<InnerT>& a, const Event<InnerT>& b) const
+            {
+                if (a.timeStamp() == b.timeStamp()) {
+                    return a.eventID() > b.eventID();
+                }
+                return a.timeStamp() > b.timeStamp();
+            }
+        };
         std::priority_queue<Event<T>, std::vector<Event<T>>, EventComparator<T>> d_queue;
     };
     template <typename T>
