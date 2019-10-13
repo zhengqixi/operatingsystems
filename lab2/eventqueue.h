@@ -1,6 +1,8 @@
 #ifndef EVENT_QUEUE_H
 #define EVENT_QUEUE_H
+#include <algorithm>
 #include <queue>
+#include <utility>
 #include <vector>
 namespace NYU {
 namespace OperatingSystems {
@@ -15,7 +17,7 @@ namespace OperatingSystems {
         // Get the event time stamp
         eTime timeStamp() const;
         // Get the event data
-        T data() const;
+        const T& data() const;
 
     private:
         eID d_eventID;
@@ -40,7 +42,7 @@ namespace OperatingSystems {
         return d_timeStamp;
     }
     template <typename T>
-    T Event<T>::data() const
+    const T& Event<T>::data() const
     {
         return d_data;
     }
@@ -49,8 +51,8 @@ namespace OperatingSystems {
     public:
         // Get the top event and remove from queue
         Event<T> popEvent();
-        // Look at the top event without removing
-        const Event<T>& peekEvent() const;
+        // Look at the next event timestamp
+        eTime peekNextTimeStamp() const;
         // Add a new event
         void addEvent(eTime timeStamp, T data);
         // Test if there are any events remaining in queue
@@ -69,24 +71,26 @@ namespace OperatingSystems {
                 return a.timeStamp() > b.timeStamp();
             }
         };
-        std::priority_queue<Event<T>, std::vector<Event<T>>, EventComparator<T>> d_queue;
+        std::vector<Event<T>> d_queue;
     };
     template <typename T>
     Event<T> EventQueue<T>::popEvent()
     {
-        auto event = d_queue.top();
-        d_queue.pop();
+        std::pop_heap(d_queue.begin(), d_queue.end(), EventComparator<T>());
+        auto event = std::move(d_queue.back());
+        d_queue.pop_back();
         return event;
     }
     template <typename T>
-    const Event<T>& EventQueue<T>::peekEvent() const
+    eTime EventQueue<T>::peekNextTimeStamp() const
     {
-        return d_queue.top();
+        return d_queue.front().timeStamp();
     }
     template <typename T>
     void EventQueue<T>::addEvent(eTime timeStamp, T data)
     {
-        d_queue.push(Event<T>(d_nextValidID, timeStamp, data));
+        d_queue.push_back(Event<T>(d_nextValidID, timeStamp, std::move(data)));
+        std::push_heap(d_queue.begin(), d_queue.end(), EventComparator<T>());
         ++d_nextValidID;
     }
     template <typename T>
