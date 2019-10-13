@@ -1,7 +1,6 @@
 #ifndef SIMULATION_H
 #define SIMULATION_H
 #include "abstractscheduler.h"
-#include "event.h"
 #include "eventqueue.h"
 #include "process.h"
 #include "randomgenerator.h"

@@ -1,4 +1,3 @@
-#include "event.h"
 #include "eventqueue.h"
 #include <iostream>
 int main()
