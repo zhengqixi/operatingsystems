@@ -3,10 +3,10 @@
 namespace NYU {
 namespace OperatingSystems {
     Process::Process(PID pid, int cpuTime, int cpuBurst, int ioBurst)
-        : d_pid(pid)
-        , d_totalCpuTime(cpuTime)
-        , d_cpuBurst(cpuBurst)
-        , d_ioBurst(ioBurst)
+        : d_pid{ pid }
+        , d_totalCpuTime{ cpuTime }
+        , d_cpuBurst{ cpuBurst }
+        , d_ioBurst{ ioBurst }
     {
     }
     std::shared_ptr<Process> Process::createProcess(int cpuTime, int cpuBurst, int ioBurst)

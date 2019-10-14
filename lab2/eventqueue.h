@@ -26,9 +26,9 @@ namespace OperatingSystems {
     };
     template <typename T>
     Event<T>::Event(eID id, eTime timeStamp, T data)
-        : d_eventID(d_eventID)
-        , d_timeStamp(timeStamp)
-        , d_data(data)
+        : d_eventID{ d_eventID }
+        , d_timeStamp{ timeStamp }
+        , d_data{ data }
     {
     }
     template <typename T>

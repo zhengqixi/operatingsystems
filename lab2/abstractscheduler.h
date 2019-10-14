@@ -5,6 +5,7 @@
 namespace NYU {
 namespace OperatingSystems {
     class AbstractScheduler {
+    public:
         // Gets a process to run
         virtual std::shared_ptr<Process> getProcess() = 0;
         // Adds a process to be scheduled eventually

@@ -7,19 +7,33 @@
 namespace NYU {
 namespace OperatingSystems {
     Simulation::Simulation(std::ifstream& processFile, std::ifstream& randomFile, AbstractScheduler& scheduler)
-        : d_randomGenerator(randomFile)
-        , d_scheduler(scheduler)
+        : d_randomGenerator{ randomFile }
+        , d_scheduler{ scheduler }
     {
         initializeEventQueue(processFile);
     }
     void Simulation::Simulate(std::ostream& output)
     {
+        bool callScheduler = false;
+        eTime currentTime = 0;
         while (d_eventQueue.hasEvents()) {
-            auto data = d_eventQueue.popEvent();
-            auto process = data.data();
-            output << "Timestamp: " << data.timeStamp() << " ";
-            output << "PID: " << process->pid() << " ";
-            output << '\n';
+            auto process = d_eventQueue.popEvent().data();
+            switch (process->getState()) {
+            case CREATED:
+                break;
+            case READY:
+                break;
+            case RUNNING:
+                break;
+            case BLOCKED:
+                break;
+            }
+            d_scheduler.addProcess(process);
+            if (callScheduler) {
+                if (d_eventQueue.peekNextTimeStamp() == currentTime) {
+                    continue;
+                }
+            }
         }
     }
     void Simulation::initializeEventQueue(std::ifstream& processFile)
@@ -27,7 +41,7 @@ namespace OperatingSystems {
         using namespace std;
         string line;
         while (getline(processFile, line)) {
-            stringstream lineParser(line);
+            stringstream lineParser{ line };
             string timestamp;
             string cpuTime;
             string cpuBurst;
