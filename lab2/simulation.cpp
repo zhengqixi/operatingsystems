@@ -16,7 +16,7 @@ namespace OperatingSystems {
     void Simulation::Simulate(std::ostream& output)
     {
         bool callScheduler = false;
-        eTime currentTime = 0;
+        long currentTime = 0;
         std::shared_ptr<Process> currentProcess = nullptr;
         while (d_eventQueue.hasEvents()) {
             auto event = d_eventQueue.popEvent();
@@ -25,11 +25,17 @@ namespace OperatingSystems {
             switch (process->transition()) {
             case TRANS_READY:
                 d_scheduler.addProcess(process);
+                // Check if process will preempt the current running process
+                // Remove events for current running process from queue and generate preempt event for this timestamp
                 callScheduler = true;
                 break;
             case TRANS_BLOCK:
                 assert(currentProcess == process);
                 currentProcess = nullptr;
+                // Check CPU time first for termination
+                // Then update CPU time
+                // Generate transition to ready event
+                process->setTransition(TRANS_READY);
                 callScheduler = true;
                 break;
             case TRANS_RUN:
@@ -38,6 +44,8 @@ namespace OperatingSystems {
             case TRANS_PREEMPT:
                 assert(currentProcess == process);
                 currentProcess = nullptr;
+                // Check CPU time first for termination
+                // Then update CPU time
                 d_scheduler.addProcess(process);
                 callScheduler = true;
                 break;

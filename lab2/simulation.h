@@ -20,7 +20,7 @@ namespace OperatingSystems {
         void initializeEventQueue(std::ifstream& processFile);
         EventQueue<std::shared_ptr<Process>> d_eventQueue;
         RandomGenerator d_randomGenerator;
-        eTime d_currTime = 0;
+        long d_currTime = 0;
         PID d_currProcess = -1;
     };
 }
