@@ -36,22 +36,14 @@ namespace OperatingSystems {
     {
         return d_ioBurst;
     }
-    PROCESS_STATES Process::getState() const
+    PROCESS_TRANSITIONS Process::transition() const
     {
-        return d_currState;
+        return d_transitionNext;
     }
-    PROCESS_STATES Process::nextState() const
+    // set next state to transition to
+    void Process::setTransition(PROCESS_TRANSITIONS next)
     {
-        return d_nextState;
-    }
-    void Process::setNextState(PROCESS_STATES nextState)
-    {
-        d_nextState = nextState;
-    }
-    // Sets the current state
-    void Process::setState(PROCESS_STATES newState)
-    {
-        d_currState = newState;
+        d_transitionNext = next;
     }
 }
 }

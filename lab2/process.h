@@ -3,11 +3,11 @@
 #include <memory>
 namespace NYU {
 namespace OperatingSystems {
-    enum PROCESS_STATES {
-        CREATED,
-        READY,
-        RUNNING,
-        BLOCKED
+    enum PROCESS_TRANSITIONS {
+        TRANS_READY,
+        TRANS_RUN,
+        TRANS_BLOCK,
+        TRANS_PREEMPT,
     };
     typedef unsigned int PID;
     class Process {
@@ -24,20 +24,15 @@ namespace OperatingSystems {
         int cpuBurst() const;
         // Get the io burst
         int ioBurst() const;
-        // Get the current state
-        PROCESS_STATES getState() const;
-        // Get the next state to transition to
-        PROCESS_STATES nextState() const;
-        // Sets the next state to transition to
-        void setNextState(PROCESS_STATES nextState);
-        // Sets the current state
-        void setState(PROCESS_STATES newState);
+        // Get next state to transition to
+        PROCESS_TRANSITIONS transition() const;
+        // set next state to transition to
+        void setTransition(PROCESS_TRANSITIONS next);
         Process(PID pid, int cpuTime, int cpuBurst, int ioBurst);
 
     private:
         PID d_pid;
-        PROCESS_STATES d_currState = CREATED;
-        PROCESS_STATES d_nextState = READY;
+        PROCESS_TRANSITIONS d_transitionNext = TRANS_READY;
         int d_totalCpuTime;
         int d_cpuBurst;
         int d_ioBurst;

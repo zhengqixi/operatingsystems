@@ -1,4 +1,5 @@
 #include "simulation.h"
+#include <cassert>
 #include <fstream>
 #include <ostream>
 #include <sstream>
@@ -16,22 +17,42 @@ namespace OperatingSystems {
     {
         bool callScheduler = false;
         eTime currentTime = 0;
+        std::shared_ptr<Process> currentProcess = nullptr;
         while (d_eventQueue.hasEvents()) {
-            auto process = d_eventQueue.popEvent().data();
-            switch (process->getState()) {
-            case CREATED:
+            auto event = d_eventQueue.popEvent();
+            currentTime = event.timeStamp();
+            auto process = event.data();
+            switch (process->transition()) {
+            case TRANS_READY:
+                d_scheduler.addProcess(process);
+                callScheduler = true;
                 break;
-            case READY:
+            case TRANS_BLOCK:
+                assert(currentProcess == process);
+                currentProcess = nullptr;
+                callScheduler = true;
                 break;
-            case RUNNING:
+            case TRANS_RUN:
+                currentProcess = process;
                 break;
-            case BLOCKED:
+            case TRANS_PREEMPT:
+                assert(currentProcess == process);
+                currentProcess = nullptr;
+                d_scheduler.addProcess(process);
+                callScheduler = true;
                 break;
             }
-            d_scheduler.addProcess(process);
             if (callScheduler) {
                 if (d_eventQueue.peekNextTimeStamp() == currentTime) {
                     continue;
+                }
+                callScheduler = false;
+                if (currentProcess == nullptr) {
+                    auto nextProcess = d_scheduler.getProcess();
+                    if (nextProcess != nullptr) {
+                        nextProcess->setTransition(TRANS_RUN);
+                        d_eventQueue.addEvent(currentTime, nextProcess);
+                    }
                 }
             }
         }
