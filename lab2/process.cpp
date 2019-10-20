@@ -2,17 +2,18 @@
 #include <memory>
 namespace NYU {
 namespace OperatingSystems {
-    Process::Process(PID pid, int cpuTime, int cpuBurst, int ioBurst)
+    Process::Process(PID pid, int cpuTime, int cpuBurst, int ioBurst, long timeStamp)
         : d_pid{ pid }
         , d_totalCpuTime{ cpuTime }
         , d_cpuBurst{ cpuBurst }
         , d_ioBurst{ ioBurst }
+        , d_timeStamp{ timeStamp }
     {
     }
-    std::shared_ptr<Process> Process::createProcess(int cpuTime, int cpuBurst, int ioBurst)
+    std::shared_ptr<Process> Process::createProcess(int cpuTime, int cpuBurst, int ioBurst, long timeStamp)
     {
         static PID newPid = 0;
-        auto newProcess = std::make_shared<Process>(newPid, cpuTime, cpuBurst, ioBurst);
+        auto newProcess = std::shared_ptr<Process>(new Process(newPid, cpuTime, cpuBurst, ioBurst, timeStamp));
         ++newPid;
         return newProcess;
     }
@@ -44,6 +45,14 @@ namespace OperatingSystems {
     void Process::setTransition(PROCESS_TRANSITIONS next)
     {
         d_transitionNext = next;
+    }
+    long Process::timeStamp() const
+    {
+        return d_timeStamp;
+    }
+    void Process::setTimeStamp(long newTime)
+    {
+        d_timeStamp = newTime;
     }
 }
 }

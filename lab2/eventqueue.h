@@ -56,7 +56,8 @@ namespace OperatingSystems {
         // Test if there are any events remaining in queue
         bool hasEvents() const;
         // Remove an event for T data, where the time IS NOT the currentTime passed in
-        void removeEvent(const T& data, long currentTime);
+        // Returns true if an event has been removed. False otherwise
+        bool removeEvent(const T& data, long currentTime);
 
     private:
         unsigned long long d_nextValidID = 0;
@@ -102,17 +103,18 @@ namespace OperatingSystems {
         return !d_queue.empty();
     }
     template <typename T>
-    void EventQueue<T>::removeEvent(const T& data, long currentTime)
+    bool EventQueue<T>::removeEvent(const T& data, long currentTime)
     {
         auto found = std::find_if(d_queue.begin(), d_queue.end(), [data, currentTime](const Event<T>& match) {
             return match.timeStamp() != currentTime && match.data() == data;
         });
         if (found == d_queue.end()) {
-            return;
+            return false;
         }
         std::iter_swap(found, d_queue.end() - 1);
         d_queue.pop_back();
         std::make_heap(found, d_queue.end(), EventComparator<T>());
+        return true;
     }
 }
 }

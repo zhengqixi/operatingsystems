@@ -11,7 +11,7 @@ int main()
     queue.addEvent(7, 7);
     queue.addEvent(1, 1);
     queue.addEvent(1, 232123); // should not be removed
-    queue.addEvent(7, 12345); // should be removed
+    queue.addEvent(3, 12345); // should be removed
     queue.addEvent(1, 2);
     queue.addEvent(3, 3);
     queue.addEvent(12, 11232); // should be removed
