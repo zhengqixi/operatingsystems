@@ -1,7 +1,11 @@
-all: eventqueue.h process.o randomgenerator.o simulation.o lab2.m.cpp
+all: eventqueue.h process.o randomgenerator.o simulation.o lab2.m.cpp fifoscheduler.o lifoscheduler.o
 	g++ -o sched eventqueue.h process.o randomgenerator.o simulation.o lab2.m.cpp
 simulation.o: simulation.h simulation.cpp
 	g++ -c simulation.h simulation.cpp
+fifoscheduler.o: fifoscheduler.h fifoscheduler.cpp
+	g++ -c fifoscheduler.h fifoscheduler.cpp
+lifoscheduler.o: lifoscheduler.h lifoscheduler.cpp
+	g++ -c lifoscheduler.h lifoscheduler.cpp
 randomgenerator.o: randomgenerator.cpp randomgenerator.h
 	g++ -c randomgenerator.h randomgenerator.cpp
 process.o: process.h process.cpp

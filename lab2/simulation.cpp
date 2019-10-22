@@ -14,7 +14,7 @@ namespace OperatingSystems {
     {
         initializeEventQueue(processFile);
     }
-    void Simulation::Simulate(std::ostream& output)
+    void Simulation::Simulate(std::ostream& output, bool verbose)
     {
         long quantum = d_scheduler->quantum();
         bool callScheduler = false;
@@ -118,8 +118,10 @@ namespace OperatingSystems {
             int ioBurst;
             lineParser >> timeStamp >> cpuTime >> cpuBurst >> ioBurst;
             int priority = d_randomGenerator.getRandom(maxPrio);
-            d_eventQueue.addEvent(timeStamp,
-                Process::createProcess(cpuTime, cpuBurst, ioBurst, timeStamp, priority));
+            auto process = Process::createProcess(cpuTime, cpuBurst, ioBurst, timeStamp, priority);
+            process->setTransition(TRANS_READY);
+            d_eventQueue.addEvent(timeStamp, process);
+            d_processList.push_back(process);
         }
     }
 }

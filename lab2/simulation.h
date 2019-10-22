@@ -7,21 +7,21 @@
 #include <fstream>
 #include <memory>
 #include <ostream>
+#include <vector>
 namespace NYU {
 namespace OperatingSystems {
     class Simulation {
     public:
         Simulation(std::ifstream& processFile, std::ifstream& randomFile, std::shared_ptr<AbstractScheduler> scheduler);
         // Simulates the events, logging output to the provided output stream
-        void Simulate(std::ostream& output);
+        void Simulate(std::ostream& output, bool verbose);
 
     private:
         std::shared_ptr<AbstractScheduler> d_scheduler;
         void initializeEventQueue(std::ifstream& processFile);
         EventQueue<std::shared_ptr<Process>> d_eventQueue;
         RandomGenerator d_randomGenerator;
-        long d_currTime = 0;
-        PID d_currProcess = -1;
+        std::vector<std::shared_ptr<Process>> d_processList;
     };
 }
 }
