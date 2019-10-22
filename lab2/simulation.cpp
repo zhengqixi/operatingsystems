@@ -1,13 +1,14 @@
 #include "simulation.h"
 #include <cassert>
 #include <fstream>
+#include <memory>
 #include <ostream>
 #include <sstream>
 #include <string>
 #include <utility>
 namespace NYU {
 namespace OperatingSystems {
-    Simulation::Simulation(std::ifstream& processFile, std::ifstream& randomFile, AbstractScheduler& scheduler)
+    Simulation::Simulation(std::ifstream& processFile, std::ifstream& randomFile, std::shared_ptr<AbstractScheduler> scheduler)
         : d_randomGenerator{ randomFile }
         , d_scheduler{ scheduler }
     {
@@ -15,7 +16,7 @@ namespace OperatingSystems {
     }
     void Simulation::Simulate(std::ostream& output)
     {
-        long quantum = d_scheduler.quantum();
+        long quantum = d_scheduler->quantum();
         bool callScheduler = false;
         long currentTime = 0;
         // If a process transitioning to ready preempts the current process,
@@ -33,11 +34,12 @@ namespace OperatingSystems {
             switch (process->transition()) {
             case TRANS_READY: {
                 callScheduler = true;
-                d_scheduler.addProcess(process);
+                d_scheduler->addProcess(process);
+                process->resetDynamicPriority();
                 // Check if process will preempt the current running process
                 // This only really happens on the preprio
                 // Remove events for current running process from queue and generate preempt event for this timestamp
-                if (!processBootEvent && d_scheduler.testPrempt(process, currentTime)) {
+                if (!processBootEvent && d_scheduler->testPrempt(process, currentProcess)) {
                     processBootEvent = true;
                     if (d_eventQueue.removeEvent(currentProcess, currentTime)) {
                         currentProcess->setTransition(TRANS_PREEMPT);
@@ -52,7 +54,7 @@ namespace OperatingSystems {
                 currentProcess = nullptr;
                 process->runCPU(elaspedTime);
                 if (process->totalCPUTime() != 0) {
-                    d_scheduler.addProcess(process);
+                    d_scheduler->addProcess(process);
                 }
                 process->setTransition(TRANS_READY);
                 int ioBurst = d_randomGenerator.getRandom(process->ioBurst());
@@ -82,8 +84,9 @@ namespace OperatingSystems {
                 currentProcess = nullptr;
                 process->runCPU(elaspedTime);
                 if (process->totalCPUTime() != 0) {
-                    d_scheduler.addProcess(process);
+                    d_scheduler->addProcess(process);
                 }
+                process->resetDynamicPriority();
                 break;
             }
             }
@@ -94,7 +97,7 @@ namespace OperatingSystems {
                 callScheduler = false;
                 processBootEvent = false;
                 if (currentProcess == nullptr) {
-                    auto nextProcess = d_scheduler.getProcess();
+                    auto nextProcess = d_scheduler->getProcess();
                     if (nextProcess != nullptr) {
                         nextProcess->setTransition(TRANS_RUN);
                         d_eventQueue.addEvent(currentTime, nextProcess);
@@ -105,17 +108,18 @@ namespace OperatingSystems {
     }
     void Simulation::initializeEventQueue(std::ifstream& processFile)
     {
-        using namespace std;
-        string line;
-        while (getline(processFile, line)) {
-            stringstream lineParser{ line };
+        std::string line;
+        int maxPrio = d_scheduler->maxPriority();
+        while (std::getline(processFile, line)) {
+            std::stringstream lineParser{ line };
             int timeStamp;
             int cpuTime;
             int cpuBurst;
             int ioBurst;
             lineParser >> timeStamp >> cpuTime >> cpuBurst >> ioBurst;
+            int priority = d_randomGenerator.getRandom(maxPrio);
             d_eventQueue.addEvent(timeStamp,
-                Process::createProcess(cpuTime, cpuBurst, ioBurst, timeStamp));
+                Process::createProcess(cpuTime, cpuBurst, ioBurst, timeStamp, priority));
         }
     }
 }
