@@ -28,18 +28,21 @@ namespace OperatingSystems {
             auto event = d_eventQueue.popEvent();
             currentTime = event.timeStamp();
             auto process = event.data();
-            long elaspedTime = process->timeStamp() - currentTime;
+            long elaspedTime = currentTime - process->timeStamp();
             assert(elaspedTime >= 0);
             process->setTimeStamp(currentTime);
             switch (process->transition()) {
             case TRANS_READY: {
                 callScheduler = true;
+                if (process->createTime() != currentTime) {
+                    process->addIOTime(elaspedTime);
+                }
                 d_scheduler->addProcess(process);
                 process->resetDynamicPriority();
                 // Check if process will preempt the current running process
                 // This only really happens on the preprio
                 // Remove events for current running process from queue and generate preempt event for this timestamp
-                if (!processBootEvent && d_scheduler->testPrempt(process, currentProcess)) {
+                if (currentProcess != nullptr && !processBootEvent && d_scheduler->testPrempt(process, currentProcess)) {
                     processBootEvent = true;
                     if (d_eventQueue.removeEvent(currentProcess, currentTime)) {
                         currentProcess->setTransition(TRANS_PREEMPT);
@@ -52,9 +55,8 @@ namespace OperatingSystems {
                 assert(currentProcess == process);
                 callScheduler = true;
                 currentProcess = nullptr;
-                process->runCPU(elaspedTime);
-                if (process->totalCPUTime() != 0) {
-                    d_scheduler->addProcess(process);
+                if (checkTermination(process, elaspedTime)) {
+                    break;
                 }
                 process->setTransition(TRANS_READY);
                 int ioBurst = d_randomGenerator.getRandom(process->ioBurst());
@@ -64,15 +66,16 @@ namespace OperatingSystems {
             case TRANS_RUN: {
                 // Current process must be taken out by a preemption event or something first
                 assert(currentProcess == nullptr);
+                process->addReadyTime(elaspedTime);
                 currentProcess = process;
-                int runTime = process->remainingCpuBurst();
+                int runTime = process->remainingCPUBurst();
                 if (runTime == 0) {
                     runTime = d_randomGenerator.getRandom(process->cpuBurst());
                 }
-                if (runTime > process->totalCPUTime()) {
-                    runTime = process->totalCPUTime();
+                if (runTime > process->remainingCPUTime()) {
+                    runTime = process->remainingCPUTime();
                 }
-                process->setCpuBurst(runTime);
+                process->setCPUBurst(runTime);
                 if (runTime > quantum) {
                     process->setTransition(TRANS_PREEMPT);
                     d_eventQueue.addEvent(currentTime + quantum, process);
@@ -86,11 +89,10 @@ namespace OperatingSystems {
                 assert(currentProcess == process);
                 callScheduler = true;
                 currentProcess = nullptr;
-                process->runCPU(elaspedTime);
-                if (process->totalCPUTime() != 0) {
-                    d_scheduler->addProcess(process);
+                if (checkTermination(process, elaspedTime)) {
+                    break;
                 }
-                process->resetDynamicPriority();
+                process->decrementPriority();
                 break;
             }
             }
@@ -127,6 +129,15 @@ namespace OperatingSystems {
             d_eventQueue.addEvent(timeStamp, process);
             d_processList.push_back(process);
         }
+    }
+    bool Simulation::checkTermination(std::shared_ptr<Process> process, long elaspedTime)
+    {
+        process->runCPU(elaspedTime);
+        if (process->remainingCPUTime() != 0) {
+            d_scheduler->addProcess(process);
+            return false;
+        }
+        return true;
     }
 }
 }

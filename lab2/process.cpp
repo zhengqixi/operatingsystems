@@ -1,10 +1,14 @@
 #include "process.h"
 #include <memory>
+#include <ostream>
+#include <stdio.h>
+#include <string>
 namespace NYU {
 namespace OperatingSystems {
     Process::Process(PID pid, int cpuTime, int cpuBurst, int ioBurst, long creationTime, int staticPriority)
         : d_pid{ pid }
         , d_totalCpuTime{ cpuTime }
+        , d_remainingCpuTime{ cpuTime }
         , d_cpuBurst{ cpuBurst }
         , d_ioBurst{ ioBurst }
         , d_timeStamp{ creationTime }
@@ -28,13 +32,17 @@ namespace OperatingSystems {
     {
         return d_totalCpuTime;
     }
+    int Process::remainingCPUTime() const
+    {
+        return d_remainingCpuTime;
+    }
     long Process::createTime() const
     {
         return d_creationTime;
     }
     void Process::runCPU(int cpuRun)
     {
-        d_totalCpuTime -= cpuRun;
+        d_remainingCpuTime -= cpuRun;
         d_remainingCpuBurst -= cpuRun;
     }
     int Process::cpuBurst() const
@@ -82,13 +90,38 @@ namespace OperatingSystems {
     {
         d_dynamicPriority = d_staticPriority - 1;
     }
-    int Process::remainingCpuBurst() const
+    int Process::remainingCPUBurst() const
     {
         return d_remainingCpuBurst;
     }
-    void Process::setCpuBurst(int burst)
+    void Process::setCPUBurst(int burst)
     {
         d_remainingCpuBurst = burst;
+    }
+    void Process::addIOTime(int IOTime)
+    {
+        d_ioTime += IOTime;
+    }
+    void Process::addReadyTime(int readyTime)
+    {
+        d_readyTime += readyTime;
+    }
+    void Process::setFinishTime(long finishTime)
+    {
+        d_finishTime = finishTime;
+    }
+    std::ostream& operator<<(std::ostream& out, const Process& process)
+    {
+        // Really don't feel like doing the C++ way of printing the padding...
+        // A lot of overhead for something that should be so simple. ugh..
+        int turnAroundTime = process.d_finishTime - process.d_creationTime;
+        char line[100];
+        sprintf(line, "%04d: %4d %4d %4d %4d %1d | %5d %5d %5d %5d\n",
+            process.d_pid, (int)process.d_creationTime, process.d_totalCpuTime,
+            process.d_cpuBurst, process.d_ioBurst, process.d_staticPriority,
+            (int)process.d_finishTime, turnAroundTime, process.d_ioTime, process.d_readyTime);
+        out << std::string(line);
+        return out;
     }
 }
 }
