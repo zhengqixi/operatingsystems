@@ -35,6 +35,7 @@ namespace OperatingSystems {
     void Process::runCPU(int cpuRun)
     {
         d_totalCpuTime -= cpuRun;
+        d_remainingCpuBurst -= cpuRun;
     }
     int Process::cpuBurst() const
     {
@@ -80,6 +81,14 @@ namespace OperatingSystems {
     void Process::resetDynamicPriority()
     {
         d_dynamicPriority = d_staticPriority - 1;
+    }
+    int Process::remainingCpuBurst() const
+    {
+        return d_remainingCpuBurst;
+    }
+    void Process::setCpuBurst(int burst)
+    {
+        d_remainingCpuBurst = burst;
     }
 }
 }

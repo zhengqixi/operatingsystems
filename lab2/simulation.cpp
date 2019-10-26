@@ -65,10 +65,14 @@ namespace OperatingSystems {
                 // Current process must be taken out by a preemption event or something first
                 assert(currentProcess == nullptr);
                 currentProcess = process;
-                int runTime = d_randomGenerator.getRandom(process->cpuBurst());
+                int runTime = process->remainingCpuBurst();
+                if (runTime == 0) {
+                    runTime = d_randomGenerator.getRandom(process->cpuBurst());
+                }
                 if (runTime > process->totalCPUTime()) {
                     runTime = process->totalCPUTime();
                 }
+                process->setCpuBurst(runTime);
                 if (runTime > quantum) {
                     process->setTransition(TRANS_PREEMPT);
                     d_eventQueue.addEvent(currentTime + quantum, process);

@@ -43,6 +43,10 @@ namespace OperatingSystems {
         void decrementPriority();
         // resets the dynamic priority to max
         void resetDynamicPriority();
+        // Get the remaining amount of CPU burst left
+        int remainingCpuBurst() const;
+        // Sets the remaining amount of CPU burst left
+        void setCpuBurst(int burst);
         Process(PID pid, int cpuTime, int cpuBurst, int ioBurst, long creationTime, int staticPriority);
 
     private:
@@ -55,6 +59,7 @@ namespace OperatingSystems {
         long d_creationTime;
         int d_staticPriority;
         int d_dynamicPriority;
+        int d_remainingCpuBurst = 0;
     };
 }
 }
