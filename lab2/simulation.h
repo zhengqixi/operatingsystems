@@ -15,6 +15,7 @@ namespace OperatingSystems {
         Simulation(std::ifstream& processFile, std::ifstream& randomFile, std::shared_ptr<AbstractScheduler> scheduler);
         // Simulates the events, logging output to the provided output stream
         void Simulate(std::ostream& output, bool verbose);
+        friend std::ostream& operator<<(std::ostream& out, const Simulation& simulation);
 
     private:
         std::shared_ptr<AbstractScheduler> d_scheduler;
@@ -24,7 +25,7 @@ namespace OperatingSystems {
         std::vector<std::shared_ptr<Process>> d_processList;
         // Runs the process for the elaspedTime. Returns true if process is terminated
         // Otherwise adds to the scheduler
-        bool checkTermination(std::shared_ptr<Process> process, long elaspedTime);
+        bool checkTermination(std::shared_ptr<Process>& process, long elaspedTime);
     };
 }
 }

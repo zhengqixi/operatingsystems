@@ -130,7 +130,7 @@ namespace OperatingSystems {
             d_processList.push_back(process);
         }
     }
-    bool Simulation::checkTermination(std::shared_ptr<Process> process, long elaspedTime)
+    bool Simulation::checkTermination(std::shared_ptr<Process>& process, long elaspedTime)
     {
         process->runCPU(elaspedTime);
         if (process->remainingCPUTime() != 0) {
@@ -138,6 +138,12 @@ namespace OperatingSystems {
             return false;
         }
         return true;
+    }
+    std::ostream& operator<<(std::ostream& out, const Simulation& simulation)
+    {
+        for (auto& process : simulation.d_processList) {
+            out << (*process);
+        }
     }
 }
 }
