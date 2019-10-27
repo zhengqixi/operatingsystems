@@ -18,6 +18,16 @@ namespace OperatingSystems {
             return nullptr;
         }
         --d_processCount;
+        Process* process = nullptr;
+        for (auto i = d_decayQueue.rbegin(); i != d_decayQueue.rend(); ++i) {
+            if (!i->empty()) {
+                process = i->front();
+                i->pop();
+                break;
+            }
+        }
+        /*
+        Bit manipulation too hard :(
         // Get highest priority bit. Subtract one to account for vector 0 indexing
         // This should not be -1. If it is, we have an issue with accounting in process count
         int highestPriority = ffs(d_firstSetBit) - 1;
@@ -28,6 +38,7 @@ namespace OperatingSystems {
         if (d_decayQueue.at(highestPriority).empty()) {
             BIT_CLEAR(d_firstSetBit, highestPriority);
         }
+        */
         return process;
     }
     void PRIOScheduler::DecayQueue::addProcess(Process* process)
@@ -35,7 +46,7 @@ namespace OperatingSystems {
         ++d_processCount;
         int priority = process->dynamicPriority();
         d_decayQueue.at(priority).push(process);
-        BIT_SET(d_firstSetBit, priority);
+        // BIT_SET(d_firstSetBit, priority);
     }
     bool PRIOScheduler::DecayQueue::empty() const
     {
@@ -61,7 +72,12 @@ namespace OperatingSystems {
     }
     void PRIOScheduler::addProcess(Process* toSchedule)
     {
-        d_expired.addProcess(toSchedule);
+        if (toSchedule->dynamicPriority() == -1) {
+            toSchedule->resetDynamicPriority();
+            d_expired.addProcess(toSchedule);
+        } else {
+            d_active.addProcess(toSchedule);
+        }
     }
 }
 }

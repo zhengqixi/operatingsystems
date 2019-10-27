@@ -80,11 +80,7 @@ namespace OperatingSystems {
     }
     void Process::decrementPriority()
     {
-        if (d_dynamicPriority == 0) {
-            d_dynamicPriority = d_staticPriority - 1;
-        } else {
-            --d_dynamicPriority;
-        }
+        --d_dynamicPriority;
     }
     void Process::resetDynamicPriority()
     {

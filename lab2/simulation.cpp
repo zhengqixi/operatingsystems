@@ -70,8 +70,8 @@ namespace OperatingSystems {
                     verboseHeader(output, process, currentTime, elaspedTime);
                     output << "CREATED -> READY\n";
                 }
-                d_scheduler->addProcess(process);
                 process->resetDynamicPriority();
+                d_scheduler->addProcess(process);
                 // Check if process will preempt the current running process
                 // This only really happens on the preprio
                 // Remove events for current running process from queue and generate preempt event for this timestamp
@@ -148,8 +148,8 @@ namespace OperatingSystems {
                     output << " prio=" << process->dynamicPriority();
                     output << '\n';
                 }
-                d_scheduler->addProcess(process);
                 process->decrementPriority();
+                d_scheduler->addProcess(process);
                 break;
             }
             }
