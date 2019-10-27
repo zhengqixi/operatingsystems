@@ -1,7 +1,7 @@
 all: eventqueue.h process.o randomgenerator.o simulation.o lab2.m.cpp fifoscheduler.o lifoscheduler.o srtfscheduler.o
 	g++ -o sched eventqueue.h process.o randomgenerator.o simulation.o lab2.m.cpp fifoscheduler.o lifoscheduler.o srtfscheduler.o
 debug: *.cpp *.h 
-	g++ -ggdb -o sched lab2.m.cpp simulation.h simulation.cpp process.h process.cpp randomgenerator.h randomgenerator.cpp eventqueue.h abstractscheduler.h fifoscheduler.h fifoscheduler.cpp lifoscheduler.h lifoscheduler.cpp
+	g++ -ggdb -o sched lab2.m.cpp simulation.h simulation.cpp process.h process.cpp randomgenerator.h randomgenerator.cpp eventqueue.h abstractscheduler.h fifoscheduler.h fifoscheduler.cpp lifoscheduler.h lifoscheduler.cpp srtfscheduler.h srtfscheduler.cpp
 simulation.o: simulation.h simulation.cpp
 	g++ -c simulation.h simulation.cpp
 srtfscheduler.o: srtfscheduler.h srtfscheduler.cpp abstractscheduler.h
