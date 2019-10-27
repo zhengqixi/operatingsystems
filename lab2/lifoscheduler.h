@@ -6,7 +6,7 @@
 #include <stack>
 namespace NYU {
 namespace OperatingSystems {
-    class LifoScheduler : public AbstractScheduler {
+    class LIFOScheduler : public AbstractScheduler {
     public:
         virtual Process* getProcess() override;
         // Adds a process to be scheduled eventually

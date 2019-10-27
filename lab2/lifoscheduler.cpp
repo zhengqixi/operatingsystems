@@ -1,7 +1,7 @@
 #include "lifoscheduler.h"
 namespace NYU {
 namespace OperatingSystems {
-    Process* LifoScheduler::getProcess()
+    Process* LIFOScheduler::getProcess()
     {
         if (d_stack.empty()) {
             return nullptr;
@@ -10,7 +10,7 @@ namespace OperatingSystems {
         d_stack.pop();
         return newProcess;
     }
-    void LifoScheduler::addProcess(Process* toSchedule)
+    void LIFOScheduler::addProcess(Process* toSchedule)
     {
         d_stack.push(toSchedule);
     }

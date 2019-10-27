@@ -1,14 +1,14 @@
 #include "fifoscheduler.h"
 namespace NYU {
 namespace OperatingSystems {
-    FifoScheduler::FifoScheduler()
+    FIFOScheduler::FIFOScheduler()
     {
     }
-    FifoScheduler::FifoScheduler(int quantum)
+    FIFOScheduler::FIFOScheduler(int quantum)
     {
         d_quantum = quantum;
     }
-    Process* FifoScheduler::getProcess()
+    Process* FIFOScheduler::getProcess()
     {
         if (d_queue.empty()) {
             return nullptr;
@@ -17,7 +17,7 @@ namespace OperatingSystems {
         d_queue.pop();
         return newProcess;
     }
-    void FifoScheduler::addProcess(Process* toSchedule)
+    void FIFOScheduler::addProcess(Process* toSchedule)
     {
         d_queue.push(toSchedule);
     }

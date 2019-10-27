@@ -28,11 +28,11 @@ int main(int argc, char* argv[])
         case 's':
             switch (optarg[0]) {
             case 'F':
-                scheduler = new FifoScheduler();
+                scheduler = new FIFOScheduler();
                 schedulerName = "FCFS";
                 break;
             case 'L':
-                scheduler = new LifoScheduler();
+                scheduler = new LIFOScheduler();
                 schedulerName = "LCFS";
                 break;
             case 'S':
@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
                 break;
             case 'R':
                 sscanf(optarg, "R%d", &quantum);
-                scheduler = new FifoScheduler(quantum);
+                scheduler = new FIFOScheduler(quantum);
                 schedulerName = "RR " + std::to_string(quantum);
                 break;
             default:
