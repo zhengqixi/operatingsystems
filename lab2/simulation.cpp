@@ -41,7 +41,14 @@ namespace OperatingSystems {
             case TRANS_READY: {
                 callScheduler = true;
                 if (process->createTime() != currentTime) {
+                    if (verbose) {
+                        verboseHeader(output, process, currentTime);
+                        output << "BLOCK -> READY\n";
+                    }
                     process->addIOTime(elaspedTime);
+                } else if (verbose) {
+                    verboseHeader(output, process, currentTime);
+                    output << "CREATED -> READY\n";
                 }
                 d_scheduler->addProcess(process);
                 process->resetDynamicPriority();
@@ -61,12 +68,19 @@ namespace OperatingSystems {
                 assert(currentProcess == process);
                 callScheduler = true;
                 currentProcess = nullptr;
-                if (checkTermination(process, elaspedTime, currentTime)) {
+                if (checkTermination(process, elaspedTime, currentTime, output, verbose)) {
                     break;
                 }
                 process->setTransition(TRANS_READY);
                 int ioBurst = d_randomGenerator.getRandom(process->ioBurst());
                 d_eventQueue.addEvent(currentTime + ioBurst, process);
+                if (verbose) {
+                    verboseHeader(output, process, currentTime);
+                    output << "RUNNG -> BLOCK ib=";
+                    output << ioBurst << " rem=";
+                    output << process->remainingCPUTime();
+                    output << '\n';
+                }
                 break;
             }
             case TRANS_RUN: {
@@ -89,13 +103,21 @@ namespace OperatingSystems {
                     process->setTransition(TRANS_BLOCK);
                     d_eventQueue.addEvent(currentTime + runTime, process);
                 }
+                if (verbose) {
+                    verboseHeader(output, process, currentTime);
+                    output << "READY -> RUNNG cb=";
+                    output << runTime << " rem=";
+                    output << process->remainingCPUTime();
+                    output << " prio=" << process->staticPriority();
+                    output << '\n';
+                }
                 break;
             }
             case TRANS_PREEMPT: {
                 assert(currentProcess == process);
                 callScheduler = true;
                 currentProcess = nullptr;
-                if (checkTermination(process, elaspedTime, currentTime)) {
+                if (checkTermination(process, elaspedTime, currentTime, output, verbose)) {
                     break;
                 }
                 d_scheduler->addProcess(process);
@@ -137,14 +159,22 @@ namespace OperatingSystems {
             d_processList.push_back(process);
         }
     }
-    bool Simulation::checkTermination(Process* process, int elaspedTime, int currentTime)
+    bool Simulation::checkTermination(Process* process, int elaspedTime, int currentTime, std::ostream& output, bool verbose)
     {
         process->runCPU(elaspedTime);
         if (process->remainingCPUTime() != 0) {
             return false;
         }
         process->setFinishTime(currentTime);
+        if (verbose) {
+            verboseHeader(output, process, currentTime);
+            output << "DONE\n";
+        }
         return true;
+    }
+    void Simulation::verboseHeader(std::ostream& output, Process* process, int currentTime)
+    {
+        output << currentTime << ' ' << process->pid() << ": ";
     }
     std::ostream& operator<<(std::ostream& out, const Simulation& simulation)
     {

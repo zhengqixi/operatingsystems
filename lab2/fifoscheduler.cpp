@@ -3,6 +3,9 @@ namespace NYU {
 namespace OperatingSystems {
     Process* FifoScheduler::getProcess()
     {
+        if (d_queue.empty()) {
+            return nullptr;
+        }
         auto newProcess = d_queue.front();
         d_queue.pop();
         return newProcess;
