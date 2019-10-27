@@ -17,7 +17,7 @@ int main(int argc, char* argv[])
     std::string inputFileName;
     std::string randomFileName;
     bool verbose = false;
-    int priority = 10000;
+    int quantum = 10000;
     int maxPriority = 4;
     // Not gonna support e and t options because I frankly have no idea what they mean
     while ((opt = getopt(argc, argv, "vs:")) != -1) {
@@ -38,6 +38,11 @@ int main(int argc, char* argv[])
             case 'S':
                 scheduler = new SRTFScheduler();
                 schedulerName = "SRTF";
+                break;
+            case 'R':
+                sscanf(optarg, "R%d", &quantum);
+                scheduler = new FifoScheduler(quantum);
+                schedulerName = "RR " + std::to_string(quantum);
                 break;
             default:
                 std::cerr << "Unsupported scheduler\n";
