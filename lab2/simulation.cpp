@@ -4,6 +4,7 @@
 #include <memory>
 #include <ostream>
 #include <sstream>
+#include <stdio.h>
 #include <string>
 #include <utility>
 namespace NYU {
@@ -25,13 +26,31 @@ namespace OperatingSystems {
         int quantum = d_scheduler->quantum();
         bool callScheduler = false;
         int currentTime = 0;
+        int blockedProcesses = 0;
+        int ioUsageTime = 0;
+        int cpuUsageTime = 0;
         // If a process transitioning to ready preempts the current process,
         // This is set to guard against multiple processes preempting the current process
         // One the scheduler is called, the new process is run and this is no inter true
         bool processBootEvent = false;
         Process* currentProcess = nullptr;
         while (d_eventQueue.hasEvents()) {
+            // Really check to see that we don't go below 0
+            assert(blockedProcesses >= 0);
             auto event = d_eventQueue.popEvent();
+            // Do data recording if we're moving to a new timestamp ONLY
+            if (event.timeStamp() != currentTime) {
+                // Time between last time stamp and new event
+                int elaspsedTime = event.timeStamp() - currentTime;
+                // MUST be greater than 0 based on our check
+                assert(elaspsedTime > 0);
+                if (currentProcess != nullptr) {
+                    cpuUsageTime += elaspsedTime;
+                }
+                if (blockedProcesses > 0) {
+                    ioUsageTime += elaspsedTime;
+                }
+            }
             currentTime = event.timeStamp();
             auto process = event.data();
             int elaspedTime = currentTime - process->timeStamp();
@@ -41,11 +60,12 @@ namespace OperatingSystems {
             case TRANS_READY: {
                 callScheduler = true;
                 if (process->createTime() != currentTime) {
+                    --blockedProcesses;
                     if (verbose) {
                         verboseHeader(output, process, currentTime);
                         output << "BLOCK -> READY\n";
                     }
-                    process->addIOTime(elaspedTime);
+                    process->addBlockedTime(elaspedTime);
                 } else if (verbose) {
                     verboseHeader(output, process, currentTime);
                     output << "CREATED -> READY\n";
@@ -81,12 +101,13 @@ namespace OperatingSystems {
                     output << process->remainingCPUTime();
                     output << '\n';
                 }
+                ++blockedProcesses;
                 break;
             }
             case TRANS_RUN: {
                 // Current process must be taken out by a preemption event or something first
                 assert(currentProcess == nullptr);
-                process->addReadyTime(elaspedTime);
+                process->addWaitingTime(elaspedTime);
                 currentProcess = process;
                 int runTime = process->remainingCPUBurst();
                 if (runTime == 0) {
@@ -140,6 +161,23 @@ namespace OperatingSystems {
                 }
             }
         }
+        assert(currentProcess == nullptr);
+        assert(blockedProcesses == 0);
+        // Calculate summary metrics
+        d_finishTime = currentTime;
+        double finishTime = static_cast<double>(d_finishTime);
+        double processListSize = static_cast<double>(d_processList.size());
+        d_cpuUsagePercentage = static_cast<double>(cpuUsageTime) / finishTime * 100;
+        d_ioUsagePercentage = static_cast<double>(ioUsageTime) / finishTime * 100;
+        d_processThroughput = processListSize / finishTime * 100;
+        double totalWaitTime = 0;
+        double totalTurnaroundTime = 0;
+        for (auto process : d_processList) {
+            totalWaitTime += process->waitingTime();
+            totalTurnaroundTime += process->turnaroundTime();
+        }
+        d_averageCPUTurnaroundTime = totalTurnaroundTime / processListSize;
+        d_averageCPUWaitTime = totalWaitTime / processListSize;
     }
     void Simulation::initializeEventQueue(std::ifstream& processFile)
     {
@@ -181,6 +219,14 @@ namespace OperatingSystems {
         for (auto process : simulation.d_processList) {
             out << (*process);
         }
+        // Again, don't like the wait C++ handles output precision and padding
+        // So cumbersome!
+        char output[200];
+        sprintf(output, "SUM: %d %.2lf %.2lf %.2lf %.2lf %.3lf\n",
+            simulation.d_finishTime, simulation.d_cpuUsagePercentage,
+            simulation.d_ioUsagePercentage, simulation.d_averageCPUTurnaroundTime,
+            simulation.d_averageCPUWaitTime, simulation.d_processThroughput);
+        out << std::string(output) << '\n';
     }
 }
 }

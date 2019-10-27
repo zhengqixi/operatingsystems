@@ -25,9 +25,16 @@ namespace OperatingSystems {
         RandomGenerator d_randomGenerator;
         std::vector<Process*> d_processList;
         // Runs the process for the elaspedTime. Returns true if process is terminated
-        // Otherwise adds to the scheduler
         bool checkTermination(Process* process, int elaspedTime, int currentTime, std::ostream& output, bool verbose);
         void verboseHeader(std::ostream& output, Process* process, int currentTime);
+        // Simulation state data
+        // Summarization data
+        int d_finishTime = 0;
+        double d_ioUsagePercentage = 0;
+        double d_cpuUsagePercentage = 0;
+        double d_processThroughput = 0;
+        double d_averageCPUWaitTime = 0;
+        double d_averageCPUTurnaroundTime = 0;
     };
 }
 }

@@ -98,28 +98,37 @@ namespace OperatingSystems {
     {
         d_remainingCpuBurst = burst;
     }
-    void Process::addIOTime(int IOTime)
+    void Process::addBlockedTime(int IOTime)
     {
-        d_ioTime += IOTime;
+        d_blockedTime += IOTime;
     }
-    void Process::addReadyTime(int readyTime)
+    void Process::addWaitingTime(int readyTime)
     {
-        d_readyTime += readyTime;
+        d_waitingTime += readyTime;
     }
     void Process::setFinishTime(int finishTime)
     {
         d_finishTime = finishTime;
+        d_turnAroundTime = d_finishTime - d_creationTime;
+    }
+    int Process::waitingTime() const
+    {
+        return d_waitingTime;
+    }
+    int Process::turnaroundTime() const
+    {
+        return d_turnAroundTime;
     }
     std::ostream& operator<<(std::ostream& out, const Process& process)
     {
         // Really don't feel like doing the C++ way of printing the padding...
         // A lot of overhead for something that should be so simple. ugh..
-        int turnAroundTime = process.d_finishTime - process.d_creationTime;
         char line[100];
         sprintf(line, "%04d: %4d %4d %4d %4d %1d | %5d %5d %5d %5d\n",
-            process.d_pid, (int)process.d_creationTime, process.d_totalCpuTime,
+            process.d_pid, process.d_creationTime, process.d_totalCpuTime,
             process.d_cpuBurst, process.d_ioBurst, process.d_staticPriority,
-            (int)process.d_finishTime, turnAroundTime, process.d_ioTime, process.d_readyTime);
+            process.d_finishTime, process.d_turnAroundTime,
+            process.d_blockedTime, process.d_waitingTime);
         out << std::string(line);
         return out;
     }

@@ -53,11 +53,15 @@ namespace OperatingSystems {
         void resetDynamicPriority();
         // Book keeping functions
         // Increases amount of time spent waiting on IO
-        void addIOTime(int IOTime);
+        void addBlockedTime(int IOTime);
         // Increases the amount of time spent in ready queue
-        void addReadyTime(int readyTime);
+        void addWaitingTime(int readyTime);
         // Set the finish time
         void setFinishTime(int finishTime);
+        // Get the waiting time spent in ready
+        int waitingTime() const;
+        // Get turnaround time
+        int turnaroundTime() const;
         friend std::ostream& operator<<(std::ostream& out, const Process& process);
 
     private:
@@ -74,12 +78,15 @@ namespace OperatingSystems {
         int d_remainingCpuTime;
         int d_dynamicPriority;
         int d_remainingCpuBurst = 0;
+
         // Book keeping parameters
+
         // Time waiting for IO
-        int d_ioTime = 0;
+        int d_blockedTime = 0;
         // Time waiting in run queue
-        int d_readyTime = 0;
-        int d_finishTime = -1;
+        int d_waitingTime = 0;
+        int d_finishTime = 0;
+        int d_turnAroundTime = 0;
     };
 }
 }
