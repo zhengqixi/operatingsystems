@@ -1,19 +1,16 @@
-#ifndef FIFO_SCHEDULER_H
-#define FIFO_SCHEDULER_H
+#ifndef SRTF_SCHEDULER_H
+#define SRTF_SCHEDULER_H
 #include "abstractscheduler.h"
 #include "process.h"
-
-#include <queue>
 namespace NYU {
 namespace OperatingSystems {
-    class FifoScheduler : public AbstractScheduler {
+    class SRTFScheduler : public AbstractScheduler {
     public:
         Process* getProcess();
         // Adds a process to be scheduled eventually
         void addProcess(Process* toSchedule);
 
     private:
-        std::queue<Process*> d_queue;
     };
 }
 }

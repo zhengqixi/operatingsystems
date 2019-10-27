@@ -2,7 +2,7 @@
 #define LIFO_SCHEDULER_H
 #include "abstractscheduler.h"
 #include "process.h"
-#include <memory>
+
 #include <stack>
 namespace NYU {
 namespace OperatingSystems {

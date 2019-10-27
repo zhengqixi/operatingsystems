@@ -108,7 +108,7 @@ namespace OperatingSystems {
                     output << "READY -> RUNNG cb=";
                     output << runTime << " rem=";
                     output << process->remainingCPUTime();
-                    output << " prio=" << process->staticPriority();
+                    output << " prio=" << process->dynamicPriority();
                     output << '\n';
                 }
                 break;

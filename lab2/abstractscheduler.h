@@ -1,7 +1,7 @@
 #ifndef ABSTRACT_SCHEDULER_H
 #define ABSTRACT_SCHEDULER_H
 #include "process.h"
-#include <memory>
+
 namespace NYU {
 namespace OperatingSystems {
     class AbstractScheduler {

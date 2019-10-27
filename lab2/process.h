@@ -1,6 +1,5 @@
 #ifndef PROCESS_H
 #define PROCESS_H
-#include <memory>
 #include <ostream>
 namespace NYU {
 namespace OperatingSystems {
