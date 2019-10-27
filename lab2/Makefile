@@ -24,5 +24,6 @@ randomgenerator.out: randomgenerator.h randomgenerator.cpp randomgenerator.m.cpp
 	g++ -ggdb -o randomgenerator.out randomgenerator.h randomgenerator.cpp randomgenerator.m.cpp
 process.out: process.h process.cpp process.m.cpp
 	g++ -ggdb -o process.out process.h process.cpp process.m.cpp
+tar: *.cpp *.h Makefile README.md
 clean:
 	rm -f *.out *.o *.gch sched
