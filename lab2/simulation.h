@@ -26,7 +26,7 @@ namespace OperatingSystems {
         std::vector<Process*> d_processList;
         // Runs the process for the elaspedTime. Returns true if process is terminated
         bool checkTermination(Process* process, int elaspedTime, int currentTime, std::ostream& output, bool verbose);
-        void verboseHeader(std::ostream& output, Process* process, int currentTime);
+        void verboseHeader(std::ostream& output, Process* process, int currentTime, int processElaspedTime);
         // Simulation state data
         // Summarization data
         int d_finishTime = 0;

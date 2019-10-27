@@ -62,12 +62,12 @@ namespace OperatingSystems {
                 if (process->createTime() != currentTime) {
                     --blockedProcesses;
                     if (verbose) {
-                        verboseHeader(output, process, currentTime);
+                        verboseHeader(output, process, currentTime, elaspedTime);
                         output << "BLOCK -> READY\n";
                     }
                     process->addBlockedTime(elaspedTime);
                 } else if (verbose) {
-                    verboseHeader(output, process, currentTime);
+                    verboseHeader(output, process, currentTime, elaspedTime);
                     output << "CREATED -> READY\n";
                 }
                 d_scheduler->addProcess(process);
@@ -95,7 +95,7 @@ namespace OperatingSystems {
                 int ioBurst = d_randomGenerator.getRandom(process->ioBurst());
                 d_eventQueue.addEvent(currentTime + ioBurst, process);
                 if (verbose) {
-                    verboseHeader(output, process, currentTime);
+                    verboseHeader(output, process, currentTime, elaspedTime);
                     output << "RUNNG -> BLOCK ib=";
                     output << ioBurst << " rem=";
                     output << process->remainingCPUTime();
@@ -125,7 +125,7 @@ namespace OperatingSystems {
                     d_eventQueue.addEvent(currentTime + runTime, process);
                 }
                 if (verbose) {
-                    verboseHeader(output, process, currentTime);
+                    verboseHeader(output, process, currentTime, elaspedTime);
                     output << "READY -> RUNNG cb=";
                     output << runTime << " rem=";
                     output << process->remainingCPUTime();
@@ -205,14 +205,14 @@ namespace OperatingSystems {
         }
         process->setFinishTime(currentTime);
         if (verbose) {
-            verboseHeader(output, process, currentTime);
+            verboseHeader(output, process, currentTime, elaspedTime);
             output << "Done\n";
         }
         return true;
     }
-    void Simulation::verboseHeader(std::ostream& output, Process* process, int currentTime)
+    void Simulation::verboseHeader(std::ostream& output, Process* process, int currentTime, int processElaspedTime)
     {
-        output << currentTime << ' ' << process->pid() << ": ";
+        output << currentTime << ' ' << process->pid() << ' ' << processElaspedTime << ": ";
     }
     std::ostream& operator<<(std::ostream& out, const Simulation& simulation)
     {
