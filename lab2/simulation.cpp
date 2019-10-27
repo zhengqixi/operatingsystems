@@ -1,5 +1,4 @@
 #include "simulation.h"
-#include <cassert>
 #include <fstream>
 #include <ostream>
 #include <sstream>
@@ -35,15 +34,11 @@ namespace OperatingSystems {
         bool processBootEvent = false;
         Process* currentProcess = nullptr;
         while (d_eventQueue.hasEvents()) {
-            // Really check to see that we don't go below 0
-            assert(blockedProcesses >= 0);
             auto event = d_eventQueue.popEvent();
             // Do data recording if we're moving to a new timestamp ONLY
             if (event.timeStamp() != currentTime) {
                 // Time between last time stamp and new event
                 int elaspsedTime = event.timeStamp() - currentTime;
-                // MUST be greater than 0 based on our check
-                assert(elaspsedTime > 0);
                 if (currentProcess != nullptr) {
                     cpuUsageTime += elaspsedTime;
                 }
@@ -54,7 +49,6 @@ namespace OperatingSystems {
             currentTime = event.timeStamp();
             auto process = event.data();
             int elaspedTime = currentTime - process->timeStamp();
-            assert(elaspedTime >= 0);
             process->setTimeStamp(currentTime);
             switch (process->transition()) {
             case TRANS_READY: {
@@ -85,7 +79,6 @@ namespace OperatingSystems {
                 break;
             }
             case TRANS_BLOCK: {
-                assert(currentProcess == process);
                 callScheduler = true;
                 currentProcess = nullptr;
                 if (checkTermination(process, elaspedTime, currentTime, output, verbose)) {
@@ -105,8 +98,6 @@ namespace OperatingSystems {
                 break;
             }
             case TRANS_RUN: {
-                // Current process must be taken out by a preemption event or something first
-                assert(currentProcess == nullptr);
                 process->addWaitingTime(elaspedTime);
                 currentProcess = process;
                 int runTime = process->remainingCPUBurst();
@@ -135,7 +126,6 @@ namespace OperatingSystems {
                 break;
             }
             case TRANS_PREEMPT: {
-                assert(currentProcess == process);
                 callScheduler = true;
                 currentProcess = nullptr;
                 if (checkTermination(process, elaspedTime, currentTime, output, verbose)) {
@@ -168,8 +158,6 @@ namespace OperatingSystems {
                 }
             }
         }
-        assert(currentProcess == nullptr);
-        assert(blockedProcesses == 0);
         // Calculate summary metrics
         d_finishTime = currentTime;
         double finishTime = static_cast<double>(d_finishTime);
