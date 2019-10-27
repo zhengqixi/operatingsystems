@@ -1,6 +1,13 @@
 #include "fifoscheduler.h"
 namespace NYU {
 namespace OperatingSystems {
+    FifoScheduler::FifoScheduler()
+    {
+    }
+    FifoScheduler::FifoScheduler(int quantum)
+    {
+        d_quantum = quantum;
+    }
     Process* FifoScheduler::getProcess()
     {
         if (d_queue.empty()) {

@@ -24,7 +24,7 @@ namespace OperatingSystems {
     };
     template <typename T>
     Event<T>::Event(int id, int timeStamp, T data)
-        : d_eventID{ d_eventID }
+        : d_eventID{ id }
         , d_timeStamp{ timeStamp }
         , d_data{ data }
     {
@@ -78,7 +78,7 @@ namespace OperatingSystems {
     Event<T> EventQueue<T>::popEvent()
     {
         std::pop_heap(d_queue.begin(), d_queue.end(), EventComparator<T>());
-        auto event = std::move(d_queue.back());
+        auto event = d_queue.back();
         d_queue.pop_back();
         return event;
     }
@@ -93,7 +93,7 @@ namespace OperatingSystems {
     template <typename T>
     void EventQueue<T>::addEvent(int timeStamp, T data)
     {
-        d_queue.push_back(std::move(Event<T>(d_nextValidID, timeStamp, std::move(data))));
+        d_queue.push_back(Event<T>(d_nextValidID, timeStamp, data));
         std::push_heap(d_queue.begin(), d_queue.end(), EventComparator<T>());
         ++d_nextValidID;
     }

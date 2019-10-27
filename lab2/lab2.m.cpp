@@ -5,19 +5,67 @@
 #include "srtfscheduler.h"
 #include <fstream>
 #include <iostream>
-#include <memory>
+#include <unistd.h>
 
 int main(int argc, char* argv[])
 {
     using namespace NYU::OperatingSystems;
-    std::shared_ptr<AbstractScheduler> scheduler = nullptr;
-    std::ifstream input(argv[1]);
-    std::ifstream random(argv[2]);
-    scheduler = std::static_pointer_cast<AbstractScheduler>(std::make_shared<SRTFScheduler>());
+    // Data to be set by argument parser
+    int opt = -1;
+    AbstractScheduler* scheduler = nullptr;
+    std::string schedulerName;
+    std::string inputFileName;
+    std::string randomFileName;
+    bool verbose = false;
+    int priority = 10000;
+    int maxPriority = 4;
+    // Not gonna support e and t options because I frankly have no idea what they mean
+    while ((opt = getopt(argc, argv, "vs:")) != -1) {
+        switch (opt) {
+        case 'v':
+            verbose = true;
+            break;
+        case 's':
+            switch (optarg[0]) {
+            case 'F':
+                scheduler = new FifoScheduler();
+                schedulerName = "FCFS";
+                break;
+            case 'L':
+                scheduler = new LifoScheduler();
+                schedulerName = "LCFS";
+                break;
+            case 'S':
+                scheduler = new SRTFScheduler();
+                schedulerName = "SRTF";
+                break;
+            default:
+                std::cerr << "Unsupported scheduler\n";
+                return -1;
+            }
+            break;
+        default:
+            return -1;
+        }
+    }
+    if (argc - optind < 2) {
+        std::cerr << "Not enough arguments\n";
+        return -1;
+    }
+    if (scheduler == nullptr) {
+        std::cerr << "No scheduler set. Existing\n";
+        return -1;
+    }
+    inputFileName = argv[optind];
+    ++optind;
+    randomFileName = argv[optind];
+    // Parse arguments;
+    // Simulate
+    std::ifstream input(inputFileName);
+    std::ifstream random(randomFileName);
     Simulation simulation(input, random, scheduler);
-    simulation.Simulate(std::cout, true);
+    simulation.Simulate(std::cout, verbose);
+    std::cout << schedulerName << '\n';
     std::cout << simulation;
-    // Process arguments, create input streams
-    // Determine right scheduler to create and pass through
     return 0;
 }

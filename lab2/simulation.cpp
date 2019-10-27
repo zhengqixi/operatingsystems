@@ -1,7 +1,6 @@
 #include "simulation.h"
 #include <cassert>
 #include <fstream>
-#include <memory>
 #include <ostream>
 #include <sstream>
 #include <stdio.h>
@@ -9,7 +8,7 @@
 #include <utility>
 namespace NYU {
 namespace OperatingSystems {
-    Simulation::Simulation(std::ifstream& processFile, std::ifstream& randomFile, std::shared_ptr<AbstractScheduler> scheduler)
+    Simulation::Simulation(std::ifstream& processFile, std::ifstream& randomFile, AbstractScheduler* scheduler)
         : d_randomGenerator{ randomFile }
         , d_scheduler{ scheduler }
     {
@@ -20,6 +19,7 @@ namespace OperatingSystems {
         for (auto process : d_processList) {
             delete process;
         }
+        delete d_scheduler;
     }
     void Simulation::Simulate(std::ostream& output, bool verbose)
     {
@@ -206,7 +206,7 @@ namespace OperatingSystems {
         process->setFinishTime(currentTime);
         if (verbose) {
             verboseHeader(output, process, currentTime);
-            output << "DONE\n";
+            output << "Done\n";
         }
         return true;
     }
