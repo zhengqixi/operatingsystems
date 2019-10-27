@@ -4,16 +4,15 @@ namespace NYU {
 namespace OperatingSystems {
     Process* SRTFScheduler::getProcess()
     {
-        if (d_queue.empty()) {
+        if (!d_queue.hasEvents()) {
             return nullptr;
         }
-        auto newProcess = d_queue.top();
-        d_queue.pop();
-        return newProcess;
+        auto nextProcess = d_queue.popEvent();
+        return nextProcess.data();
     }
     void SRTFScheduler::addProcess(Process* toSchedule)
     {
-        d_queue.push(toSchedule);
+        d_queue.addEvent(toSchedule->remainingCPUTime(), toSchedule);
     }
 }
 }

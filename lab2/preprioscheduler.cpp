@@ -1,17 +1,15 @@
 #include "preprioscheduler.h"
+#include "prioscheduler.h"
+#include "process.h"
 namespace NYU {
 namespace OperatingSystems {
     PREPRIOScheduler::PREPRIOScheduler(int quantum, int maxPriority)
+        : PRIOScheduler(quantum, maxPriority)
     {
-        d_quantum = quantum;
-        d_priorityMax = maxPriority;
     }
-    Process* PREPRIOScheduler::getProcess()
+    bool PREPRIOScheduler::testPrempt(Process* newlyArrived, Process* currentProcess) const
     {
-        return nullptr;
-    }
-    void PREPRIOScheduler::addProcess(Process* toSchedule)
-    {
+        return newlyArrived->dynamicPriority() > currentProcess->dynamicPriority();
     }
 }
 }

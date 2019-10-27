@@ -4,15 +4,15 @@ debug: *.cpp *.h
 	g++ -ggdb -o sched lab2.m.cpp simulation.h simulation.cpp process.h process.cpp randomgenerator.h randomgenerator.cpp eventqueue.h abstractscheduler.h fifoscheduler.h fifoscheduler.cpp lifoscheduler.h lifoscheduler.cpp srtfscheduler.h srtfscheduler.cpp prioscheduler.h prioscheduler.cpp preprioscheduler.h preprioscheduler.cpp
 simulation.o: simulation.h simulation.cpp eventqueue.h
 	g++ -c simulation.h simulation.cpp
-srtfscheduler.o: srtfscheduler.h srtfscheduler.cpp abstractscheduler.h
-	g++ -c srtfscheduler.h srtfscheduler.cpp abstractscheduler.h
+srtfscheduler.o: srtfscheduler.h srtfscheduler.cpp eventqueue.h abstractscheduler.h
+	g++ -c srtfscheduler.h srtfscheduler.cpp
 fifoscheduler.o: fifoscheduler.h fifoscheduler.cpp abstractscheduler.h
 	g++ -c fifoscheduler.h fifoscheduler.cpp
 lifoscheduler.o: lifoscheduler.h lifoscheduler.cpp abstractscheduler.h
 	g++ -c lifoscheduler.h lifoscheduler.cpp
 prioscheduler.o: prioscheduler.h prioscheduler.cpp abstractscheduler.h
 	g++ -c prioscheduler.h prioscheduler.cpp
-preprioscheduler.o: preprioscheduler.h preprioscheduler.cpp abstractscheduler.h
+preprioscheduler.o: preprioscheduler.h preprioscheduler.cpp prioscheduler.h abstractscheduler.h
 	g++ -c preprioscheduler.h preprioscheduler.cpp
 randomgenerator.o: randomgenerator.cpp randomgenerator.h
 	g++ -c randomgenerator.h randomgenerator.cpp

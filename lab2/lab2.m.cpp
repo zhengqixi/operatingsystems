@@ -1,11 +1,14 @@
 #include "abstractscheduler.h"
 #include "fifoscheduler.h"
 #include "lifoscheduler.h"
+#include "preprioscheduler.h"
+#include "prioscheduler.h"
 #include "simulation.h"
 #include "srtfscheduler.h"
 #include <fstream>
 #include <iostream>
 #include <unistd.h>
+#define defaultPriority 4
 
 int main(int argc, char* argv[])
 {
@@ -17,8 +20,8 @@ int main(int argc, char* argv[])
     std::string inputFileName;
     std::string randomFileName;
     bool verbose = false;
-    int quantum = 10000;
-    int maxPriority = 4;
+    int quantum = 0;
+    int maxPriority = 0;
     // Not gonna support e and t options because I frankly have no idea what they mean
     while ((opt = getopt(argc, argv, "vs:")) != -1) {
         switch (opt) {
@@ -39,11 +42,42 @@ int main(int argc, char* argv[])
                 scheduler = new SRTFScheduler();
                 schedulerName = "SRTF";
                 break;
-            case 'R':
-                sscanf(optarg, "R%d", &quantum);
+            case 'R': {
+                int num = sscanf(optarg, "R%d", &quantum);
+                if (num != 1) {
+                    std::cerr << "Missing quantum argument to Round Robin Scheduler\n";
+                    return -1;
+                }
                 scheduler = new FIFOScheduler(quantum);
                 schedulerName = "RR " + std::to_string(quantum);
                 break;
+            }
+            case 'P': {
+                int num = sscanf(optarg, "P%d:%d", &quantum, &maxPriority);
+                if (num < 1) {
+                    std::cerr << "Missing quantum argument to Priority Scheduler\n";
+                    return -1;
+                }
+                if (num == 1) {
+                    maxPriority = defaultPriority;
+                }
+                scheduler = new PRIOScheduler(quantum, maxPriority);
+                schedulerName = "PRIO " + std::to_string(quantum);
+                break;
+            }
+            case 'E': {
+                int num = sscanf(optarg, "E%d:%d", &quantum, &maxPriority);
+                if (num < 1) {
+                    std::cerr << "Missing quantum argument to Premptive Priority Scheduler\n";
+                    return -1;
+                }
+                if (num == 1) {
+                    maxPriority = defaultPriority;
+                }
+                scheduler = new PREPRIOScheduler(quantum, maxPriority);
+                schedulerName = "PREPRIO " + std::to_string(quantum);
+                break;
+            }
             default:
                 std::cerr << "Unsupported scheduler\n";
                 return -1;

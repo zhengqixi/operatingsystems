@@ -1,15 +1,13 @@
 #ifndef PRE_PRIO_SCHEDULER_H
 #define PRE_PRIO_SCHEDULER_H
-#include "abstractscheduler.h"
+#include "prioscheduler.h"
 #include "process.h"
 namespace NYU {
 namespace OperatingSystems {
-    class PREPRIOScheduler : public AbstractScheduler {
+    class PREPRIOScheduler : public PRIOScheduler {
     public:
         PREPRIOScheduler(int quantum, int maxPriority);
-        Process* getProcess();
-        // Adds a process to be scheduled eventually
-        void addProcess(Process* toSchedule);
+        bool testPrempt(Process* newlyArrived, Process* currentProcess) const;
 
     private:
     };

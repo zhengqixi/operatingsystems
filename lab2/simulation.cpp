@@ -140,6 +140,13 @@ namespace OperatingSystems {
                 currentProcess = nullptr;
                 if (checkTermination(process, elaspedTime, currentTime, output, verbose)) {
                     break;
+                } else if (verbose) {
+                    verboseHeader(output, process, currentTime, elaspedTime);
+                    output << "RUNNG -> READY cb=";
+                    output << process->remainingCPUBurst();
+                    output << " rem=" << process->remainingCPUTime();
+                    output << " prio=" << process->dynamicPriority();
+                    output << '\n';
                 }
                 d_scheduler->addProcess(process);
                 process->decrementPriority();
