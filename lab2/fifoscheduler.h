@@ -2,7 +2,6 @@
 #define FIFO_SCHEDULER_H
 #include "abstractscheduler.h"
 #include "process.h"
-
 #include <queue>
 namespace NYU {
 namespace OperatingSystems {
