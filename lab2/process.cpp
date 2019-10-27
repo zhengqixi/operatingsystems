@@ -17,10 +17,10 @@ namespace OperatingSystems {
         , d_dynamicPriority{ staticPriority - 1 }
     {
     }
-    std::shared_ptr<Process> Process::createProcess(int cpuTime, int cpuBurst, int ioBurst, int creationTime, int staticPriority)
+    Process* Process::createProcess(int cpuTime, int cpuBurst, int ioBurst, int creationTime, int staticPriority)
     {
         static PID newPid = 0;
-        auto newProcess = std::make_shared<Process>(Process(newPid, cpuTime, cpuBurst, ioBurst, creationTime, staticPriority));
+        auto newProcess = new Process(newPid, cpuTime, cpuBurst, ioBurst, creationTime, staticPriority);
         ++newPid;
         return newProcess;
     }

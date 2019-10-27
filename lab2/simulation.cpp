@@ -14,6 +14,12 @@ namespace OperatingSystems {
     {
         initializeEventQueue(processFile);
     }
+    Simulation::~Simulation()
+    {
+        for (auto process : d_processList) {
+            delete process;
+        }
+    }
     void Simulation::Simulate(std::ostream& output, bool verbose)
     {
         int quantum = d_scheduler->quantum();
@@ -23,7 +29,7 @@ namespace OperatingSystems {
         // This is set to guard against multiple processes preempting the current process
         // One the scheduler is called, the new process is run and this is no inter true
         bool processBootEvent = false;
-        std::shared_ptr<Process> currentProcess = nullptr;
+        Process* currentProcess = nullptr;
         while (d_eventQueue.hasEvents()) {
             auto event = d_eventQueue.popEvent();
             currentTime = event.timeStamp();
@@ -131,7 +137,7 @@ namespace OperatingSystems {
             d_processList.push_back(process);
         }
     }
-    bool Simulation::checkTermination(std::shared_ptr<Process> process, int elaspedTime, int currentTime)
+    bool Simulation::checkTermination(Process* process, int elaspedTime, int currentTime)
     {
         process->runCPU(elaspedTime);
         if (process->remainingCPUTime() != 0) {

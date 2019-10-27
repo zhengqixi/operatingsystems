@@ -8,12 +8,12 @@ namespace NYU {
 namespace OperatingSystems {
     class FifoScheduler : public AbstractScheduler {
     public:
-        std::shared_ptr<Process> getProcess();
+        Process* getProcess();
         // Adds a process to be scheduled eventually
-        void addProcess(std::shared_ptr<Process> toSchedule);
+        void addProcess(Process* toSchedule);
 
     private:
-        std::queue<std::shared_ptr<Process>> d_queue;
+        std::queue<Process*> d_queue;
     };
 }
 }

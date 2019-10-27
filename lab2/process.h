@@ -16,7 +16,7 @@ namespace OperatingSystems {
         // Constructor
         Process(PID pid, int cpuTime, int cpuBurst, int ioBurst, int creationTime, int staticPriority);
         // Static method for creating processes
-        static std::shared_ptr<Process> createProcess(int cpuTime, int cpuBurst, int ioBurst, int createTime, int staticPriority);
+        static Process* createProcess(int cpuTime, int cpuBurst, int ioBurst, int createTime, int staticPriority);
         // Get process ID
         PID pid() const;
         // Get total CPU time
