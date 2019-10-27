@@ -14,9 +14,9 @@ namespace OperatingSystems {
     class Process {
     public:
         // Constructor
-        Process(PID pid, int cpuTime, int cpuBurst, int ioBurst, long creationTime, int staticPriority);
+        Process(PID pid, int cpuTime, int cpuBurst, int ioBurst, int creationTime, int staticPriority);
         // Static method for creating processes
-        static std::shared_ptr<Process> createProcess(int cpuTime, int cpuBurst, int ioBurst, long createTime, int staticPriority);
+        static std::shared_ptr<Process> createProcess(int cpuTime, int cpuBurst, int ioBurst, int createTime, int staticPriority);
         // Get process ID
         PID pid() const;
         // Get total CPU time
@@ -26,11 +26,11 @@ namespace OperatingSystems {
         // Run the cpu for the specified amount. This reduces remaining CPU time remaining CPU burst time
         void runCPU(int cpuRun);
         // Get the current timestamp for this process
-        long timeStamp() const;
+        int timeStamp() const;
         // Set the update the timestamp
-        void setTimeStamp(long newTime);
+        void setTimeStamp(int newTime);
         // Get time process was created at
-        long createTime() const;
+        int createTime() const;
         // Get the cpu burst characterization parameter
         int cpuBurst() const;
         // Get the remaining amount of CPU burst left
@@ -58,20 +58,20 @@ namespace OperatingSystems {
         // Increases the amount of time spent in ready queue
         void addReadyTime(int readyTime);
         // Set the finish time
-        void setFinishTime(long finishTime);
+        void setFinishTime(int finishTime);
         friend std::ostream& operator<<(std::ostream& out, const Process& process);
 
     private:
         // Characterization parameters
         PID d_pid;
-        long d_creationTime;
+        int d_creationTime;
         int d_totalCpuTime;
         int d_cpuBurst;
         int d_ioBurst;
         int d_staticPriority;
         // Simulation parameters
         PROCESS_TRANSITIONS d_transitionNext = TRANS_READY;
-        long d_timeStamp;
+        int d_timeStamp;
         int d_remainingCpuTime;
         int d_dynamicPriority;
         int d_remainingCpuBurst = 0;
@@ -80,7 +80,7 @@ namespace OperatingSystems {
         int d_ioTime = 0;
         // Time waiting in run queue
         int d_readyTime = 0;
-        long d_finishTime = -1;
+        int d_finishTime = -1;
     };
 }
 }

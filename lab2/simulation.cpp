@@ -16,19 +16,19 @@ namespace OperatingSystems {
     }
     void Simulation::Simulate(std::ostream& output, bool verbose)
     {
-        long quantum = d_scheduler->quantum();
+        int quantum = d_scheduler->quantum();
         bool callScheduler = false;
-        long currentTime = 0;
+        int currentTime = 0;
         // If a process transitioning to ready preempts the current process,
         // This is set to guard against multiple processes preempting the current process
-        // One the scheduler is called, the new process is run and this is no longer true
+        // One the scheduler is called, the new process is run and this is no inter true
         bool processBootEvent = false;
         std::shared_ptr<Process> currentProcess = nullptr;
         while (d_eventQueue.hasEvents()) {
             auto event = d_eventQueue.popEvent();
             currentTime = event.timeStamp();
             auto process = event.data();
-            long elaspedTime = currentTime - process->timeStamp();
+            int elaspedTime = currentTime - process->timeStamp();
             assert(elaspedTime >= 0);
             process->setTimeStamp(currentTime);
             switch (process->transition()) {
@@ -55,7 +55,7 @@ namespace OperatingSystems {
                 assert(currentProcess == process);
                 callScheduler = true;
                 currentProcess = nullptr;
-                if (checkTermination(process, elaspedTime)) {
+                if (checkTermination(process, elaspedTime, currentTime)) {
                     break;
                 }
                 process->setTransition(TRANS_READY);
@@ -89,9 +89,10 @@ namespace OperatingSystems {
                 assert(currentProcess == process);
                 callScheduler = true;
                 currentProcess = nullptr;
-                if (checkTermination(process, elaspedTime)) {
+                if (checkTermination(process, elaspedTime, currentTime)) {
                     break;
                 }
+                d_scheduler->addProcess(process);
                 process->decrementPriority();
                 break;
             }
@@ -130,18 +131,18 @@ namespace OperatingSystems {
             d_processList.push_back(process);
         }
     }
-    bool Simulation::checkTermination(std::shared_ptr<Process>& process, long elaspedTime)
+    bool Simulation::checkTermination(std::shared_ptr<Process> process, int elaspedTime, int currentTime)
     {
         process->runCPU(elaspedTime);
         if (process->remainingCPUTime() != 0) {
-            d_scheduler->addProcess(process);
             return false;
         }
+        process->setFinishTime(currentTime);
         return true;
     }
     std::ostream& operator<<(std::ostream& out, const Simulation& simulation)
     {
-        for (auto& process : simulation.d_processList) {
+        for (auto process : simulation.d_processList) {
             out << (*process);
         }
     }

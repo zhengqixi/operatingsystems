@@ -25,7 +25,7 @@ namespace OperatingSystems {
         std::vector<std::shared_ptr<Process>> d_processList;
         // Runs the process for the elaspedTime. Returns true if process is terminated
         // Otherwise adds to the scheduler
-        bool checkTermination(std::shared_ptr<Process>& process, long elaspedTime);
+        bool checkTermination(std::shared_ptr<Process> process, int elaspedTime, int currentTime);
     };
 }
 }

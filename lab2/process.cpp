@@ -5,7 +5,7 @@
 #include <string>
 namespace NYU {
 namespace OperatingSystems {
-    Process::Process(PID pid, int cpuTime, int cpuBurst, int ioBurst, long creationTime, int staticPriority)
+    Process::Process(PID pid, int cpuTime, int cpuBurst, int ioBurst, int creationTime, int staticPriority)
         : d_pid{ pid }
         , d_totalCpuTime{ cpuTime }
         , d_remainingCpuTime{ cpuTime }
@@ -17,7 +17,7 @@ namespace OperatingSystems {
         , d_dynamicPriority{ staticPriority - 1 }
     {
     }
-    std::shared_ptr<Process> Process::createProcess(int cpuTime, int cpuBurst, int ioBurst, long creationTime, int staticPriority)
+    std::shared_ptr<Process> Process::createProcess(int cpuTime, int cpuBurst, int ioBurst, int creationTime, int staticPriority)
     {
         static PID newPid = 0;
         auto newProcess = std::make_shared<Process>(Process(newPid, cpuTime, cpuBurst, ioBurst, creationTime, staticPriority));
@@ -36,7 +36,7 @@ namespace OperatingSystems {
     {
         return d_remainingCpuTime;
     }
-    long Process::createTime() const
+    int Process::createTime() const
     {
         return d_creationTime;
     }
@@ -62,11 +62,11 @@ namespace OperatingSystems {
     {
         d_transitionNext = next;
     }
-    long Process::timeStamp() const
+    int Process::timeStamp() const
     {
         return d_timeStamp;
     }
-    void Process::setTimeStamp(long newTime)
+    void Process::setTimeStamp(int newTime)
     {
         d_timeStamp = newTime;
     }
@@ -106,7 +106,7 @@ namespace OperatingSystems {
     {
         d_readyTime += readyTime;
     }
-    void Process::setFinishTime(long finishTime)
+    void Process::setFinishTime(int finishTime)
     {
         d_finishTime = finishTime;
     }

@@ -9,33 +9,33 @@ namespace OperatingSystems {
     template <typename T>
     class Event {
     public:
-        Event(unsigned long long id, long timeStamp, T data);
+        Event(int id, int timeStamp, T data);
         // Get the event ID
-        unsigned long long eventID() const;
+        int eventID() const;
         // Get the event time stamp
-        long timeStamp() const;
+        int timeStamp() const;
         // Get the event data
         const T& data() const;
 
     private:
-        unsigned long long d_eventID;
-        long d_timeStamp;
+        int d_eventID;
+        int d_timeStamp;
         T d_data;
     };
     template <typename T>
-    Event<T>::Event(unsigned long long id, long timeStamp, T data)
+    Event<T>::Event(int id, int timeStamp, T data)
         : d_eventID{ d_eventID }
         , d_timeStamp{ timeStamp }
         , d_data{ data }
     {
     }
     template <typename T>
-    unsigned long long Event<T>::eventID() const
+    int Event<T>::eventID() const
     {
         return d_eventID;
     }
     template <typename T>
-    long Event<T>::timeStamp() const
+    int Event<T>::timeStamp() const
     {
         return d_timeStamp;
     }
@@ -50,17 +50,17 @@ namespace OperatingSystems {
         // Get the top event and remove from queue
         Event<T> popEvent();
         // Look at the next event timestamp
-        long peekNextTimeStamp() const;
+        int peekNextTimeStamp() const;
         // Add a new event
-        void addEvent(long timeStamp, T data);
+        void addEvent(int timeStamp, T data);
         // Test if there are any events remaining in queue
         bool hasEvents() const;
         // Remove an event for T data, where the time IS NOT the currentTime passed in
         // Returns true if an event has been removed. False otherwise
-        bool removeEvent(const T& data, long currentTime);
+        bool removeEvent(const T& data, int currentTime);
 
     private:
-        unsigned long long d_nextValidID = 0;
+        int d_nextValidID = 0;
         template <typename InnerT>
         class EventComparator {
         public:
@@ -83,7 +83,7 @@ namespace OperatingSystems {
         return event;
     }
     template <typename T>
-    long EventQueue<T>::peekNextTimeStamp() const
+    int EventQueue<T>::peekNextTimeStamp() const
     {
         if (d_queue.empty()) {
             return -1;
@@ -91,7 +91,7 @@ namespace OperatingSystems {
         return d_queue.front().timeStamp();
     }
     template <typename T>
-    void EventQueue<T>::addEvent(long timeStamp, T data)
+    void EventQueue<T>::addEvent(int timeStamp, T data)
     {
         d_queue.push_back(std::move(Event<T>(d_nextValidID, timeStamp, std::move(data))));
         std::push_heap(d_queue.begin(), d_queue.end(), EventComparator<T>());
@@ -103,7 +103,7 @@ namespace OperatingSystems {
         return !d_queue.empty();
     }
     template <typename T>
-    bool EventQueue<T>::removeEvent(const T& data, long currentTime)
+    bool EventQueue<T>::removeEvent(const T& data, int currentTime)
     {
         auto found = std::find_if(d_queue.begin(), d_queue.end(), [data, currentTime](const Event<T>& match) {
             return match.timeStamp() != currentTime && match.data() == data;

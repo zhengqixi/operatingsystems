@@ -11,7 +11,7 @@ namespace OperatingSystems {
         // Adds a process to be scheduled eventually
         virtual void addProcess(std::shared_ptr<Process> toSchedule) = 0;
         // Get the quantum
-        long quantum() const
+        int quantum() const
         {
             return d_quantum;
         }
@@ -27,7 +27,7 @@ namespace OperatingSystems {
         }
 
     protected:
-        long d_quantum = 10000;
+        int d_quantum = 10000;
         int d_priorityMax = 4;
     };
 }

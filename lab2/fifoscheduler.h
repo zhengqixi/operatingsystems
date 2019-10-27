@@ -6,11 +6,11 @@
 #include <queue>
 namespace NYU {
 namespace OperatingSystems {
-    class FifoScheduler : AbstractScheduler {
+    class FifoScheduler : public AbstractScheduler {
     public:
-        virtual std::shared_ptr<Process> getProcess() override;
+        std::shared_ptr<Process> getProcess();
         // Adds a process to be scheduled eventually
-        virtual void addProcess(std::shared_ptr<Process> toSchedule) override;
+        void addProcess(std::shared_ptr<Process> toSchedule);
 
     private:
         std::queue<std::shared_ptr<Process>> d_queue;
