@@ -11,3 +11,6 @@ sched
 *.txt
 *.swp
 *.vscode
+lab3/scripts/*
+lab3/inputs/*
+lab3/refout/*
