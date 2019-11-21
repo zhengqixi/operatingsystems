@@ -34,7 +34,7 @@ namespace OperatingSystems {
             return true;
         }
         auto validVMA = std::find_if(d_VMA.begin(), d_VMA.end(), [address](const VMA& vma) {
-            return vma.start >= address && vma.end <= address;
+            return vma.start <= address && vma.end >= address;
         });
         if (validVMA == d_VMA.end()) {
             return false;

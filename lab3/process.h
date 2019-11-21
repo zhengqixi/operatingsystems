@@ -5,6 +5,7 @@
 namespace NYU {
 namespace OperatingSystems {
     class Process {
+    public:
         Process();
         void addVMA(int start, int end, bool fileMapped, bool writeProtected);
         Page& getPage(int address);
