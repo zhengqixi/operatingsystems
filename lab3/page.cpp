@@ -28,11 +28,7 @@ namespace OperatingSystems {
     }
     void Page::present(bool set)
     {
-        if (set) {
-            d_present = 1;
-        } else {
-            d_present = 0;
-        }
+        d_present = static_cast<unsigned int>(set);
     }
     bool Page::writeProtected() const
     {
@@ -40,11 +36,7 @@ namespace OperatingSystems {
     }
     void Page::writeProtected(bool set)
     {
-        if (set) {
-            d_writeProtected = 1;
-        } else {
-            d_writeProtected = 0;
-        }
+        d_writeProtected = static_cast<unsigned int>(set);
     }
     bool Page::modified() const
     {
@@ -52,11 +44,7 @@ namespace OperatingSystems {
     }
     void Page::modified(bool set)
     {
-        if (set) {
-            d_modified = 1;
-        } else {
-            d_modified = 0;
-        }
+        d_modified = static_cast<unsigned int>(set);
     }
     bool Page::referenced() const
     {
@@ -64,11 +52,7 @@ namespace OperatingSystems {
     }
     void Page::referenced(bool set)
     {
-        if (set) {
-            d_referenced = 1;
-        } else {
-            d_referenced = 0;
-        }
+        d_referenced = static_cast<unsigned int>(set);
     }
     bool Page::pagedOut() const
     {
@@ -76,11 +60,7 @@ namespace OperatingSystems {
     }
     void Page::pagedOut(bool set)
     {
-        if (set) {
-            d_pagedOut = 1;
-        } else {
-            d_pagedOut = 0;
-        }
+        d_pagedOut = static_cast<unsigned int>(set);
     }
     unsigned int Page::assignedFrame() const
     {
@@ -88,6 +68,7 @@ namespace OperatingSystems {
     }
     void Page::assignedFrame(unsigned int newFrame)
     {
+        present(true);
         d_assignedFrame = newFrame;
     }
     bool Page::vma() const
@@ -96,11 +77,7 @@ namespace OperatingSystems {
     }
     void Page::vma(bool set)
     {
-        if (set) {
-            d_vma = 1;
-        } else {
-            d_vma = 0;
-        }
+        d_vma = static_cast<unsigned int>(set);
     }
 }
 } // namespace NYU

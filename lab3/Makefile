@@ -1,3 +1,5 @@
+frame.o: frame.h frame.cpp
+	g++ -c frame.h frame.cpp
 process.out: page.o process.h process.cpp process.t.cpp
 	g++ -g -o process.out process.h process.cpp process.t.cpp page.o
 page.o: page.h page.cpp
