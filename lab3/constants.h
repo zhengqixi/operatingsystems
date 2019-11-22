@@ -3,7 +3,7 @@
 namespace NYU {
 namespace OperatingSystems {
     long unsigned int maxPages = 64;
-    int maxFrames = 128;
+    long unsigned int maxFrames = 128;
 }
 }
 #endif
