@@ -8,9 +8,6 @@ namespace OperatingSystems {
     Process::Process()
         : d_pages{ maxPages }
     {
-        for (int i = 0; i < maxPages; ++i) {
-            d_pages.push_back(Page());
-        }
     }
     Process::VMA::VMA(int start, int end, bool fileMapped, bool writeProtected)
         : start{ start }

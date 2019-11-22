@@ -1,11 +1,11 @@
 #include "frame.h"
 namespace NYU {
 namespace OperatingSystems {
-    int Frame::mappedProcess()
+    int Frame::mappedProcess() const
     {
         return d_mappedProcess;
     }
-    int Frame::mappedPage()
+    int Frame::mappedPage() const
     {
         return d_mappedPage;
     }
@@ -23,7 +23,7 @@ namespace OperatingSystems {
         d_mappedPage = -1;
         d_mappedProcess = -1;
     }
-    bool Frame::mapped()
+    bool Frame::mapped() const
     {
         return !d_mappedProcess == -1;
     }

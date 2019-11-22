@@ -1,3 +1,7 @@
+simulation.o: simulation.h simulation.cpp page.h pagehandler.h process.h
+	g++ -c simulation.h simulation.cpp
+pagehandler.o: pagehandler.h pagehandler.cpp frame.h constants.h
+	g++ -c pagehandler.h pagehandler.cpp
 frame.o: frame.h frame.cpp
 	g++ -c frame.h frame.cpp
 process.out: page.o process.h process.cpp process.t.cpp
