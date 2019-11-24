@@ -12,12 +12,12 @@ namespace OperatingSystems {
     {
         return d_globalFrame[frameIndex];
     }
-    Frame& PageHandler::selectFrame()
+    unsigned int PageHandler::selectFrame()
     {
         if (!d_freeFrames.empty()) {
             unsigned int next = d_freeFrames.front();
             d_freeFrames.pop();
-            return d_globalFrame[next];
+            return next;
         }
         return selectVictimFrame();
     }

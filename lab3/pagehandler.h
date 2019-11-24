@@ -11,10 +11,10 @@ namespace OperatingSystems {
         // Returns a frame from the global table by index
         Frame& getFrame(unsigned int frameIndex);
         // Selects a frame from either free or victim for use
-        Frame& selectFrame();
+        unsigned int selectFrame();
 
     private:
-        virtual Frame& selectVictimFrame() = 0;
+        virtual unsigned int selectVictimFrame() = 0;
         std::vector<Frame> d_globalFrame;
         std::queue<unsigned int> d_freeFrames;
     };

@@ -34,7 +34,7 @@ namespace OperatingSystems {
     void Simulation::run()
     {
         int currentProcess = -1;
-        char inst = '';
+        char inst = '\0';
         int operand = -1;
         while (nextInstruction(inst, operand)) {
             if (inst == 'c') {
