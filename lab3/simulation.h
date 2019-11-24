@@ -18,7 +18,7 @@ namespace OperatingSystems {
         PageHandler* d_faultHandler = nullptr;
         bool nextInstruction(char& inst, int& operand);
         std::string nextLine();
-        void processExist(int processNum);
+        void processExist(int processNum, std::ostream& output, bool unmapOut);
         std::istream& d_input;
         std::vector<Process> d_processList;
     };

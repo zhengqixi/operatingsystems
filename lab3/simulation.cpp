@@ -43,36 +43,108 @@ namespace OperatingSystems {
             }
             if (inst == 'c') {
                 currentProcess = operand;
+                ++currentInst;
                 continue;
             }
             if (inst == 'e') {
-                processExist(currentProcess);
+                processExist(currentProcess, output, perInstOutput);
                 currentProcess = -1;
+                ++currentInst;
                 continue;
             }
-            auto& page = d_processList[currentProcess].getPage(operand);
-            bool noSegFault = true;
+            auto& page = d_processList[currentProcess][operand];
             if (!page.present()) {
                 if (!d_processList[currentProcess].setPageBits(operand)) {
-                    noSegFault = false;
-                    // SIGSEGV!
+                    // SEGV
+                    ++currentInst;
+                    if (perInstOutput) {
+                        output << " SEGV\n";
+                    }
+                    continue;
                 } else {
-                    // Handle fault
+                    auto frameIndex = d_faultHandler->selectFrame();
+                    auto& frameEntry = (*d_faultHandler)[frameIndex];
+                    if (frameEntry.mapped()) {
+                        auto mappedProcess = frameEntry.mappedProcess();
+                        auto mappedPage = frameEntry.mappedPage();
+                        if (perInstOutput) {
+                            output << " UNMAP " << mappedProcess << ':' << mappedPage << '\n';
+                        }
+                        auto& sadpage = d_processList[mappedProcess][mappedPage];
+                        if (sadpage.modified()) {
+                            if (sadpage.fileMapped()) {
+                                if (perInstOutput) {
+                                    output << " FOUT\n";
+                                }
+                            } else {
+                                if (perInstOutput) {
+                                    output << " OUT\n";
+                                }
+                            }
+                            sadpage.modified(false);
+                        }
+                        sadpage.present(false);
+                        sadpage.pagedOut(true);
+                    }
+                    frameEntry.mappedPage(operand);
+                    frameEntry.mappedProcess(currentProcess);
+                    page.assignedFrame(frameIndex);
+                    if (page.pagedOut()) {
+                        // Previously paged out
+                        if (page.fileMapped()) {
+                            // Filemapped, we bring it back from file
+                            if (perInstOutput) {
+                                output << " FIN\n";
+                            }
+                        } else {
+                            // Fetch from swap
+                            if (perInstOutput) {
+                                output << " IN\n";
+                            }
+                        }
+                    } else if (page.fileMapped()) {
+                        if (perInstOutput) {
+                            output << " FIN\n";
+                        }
+                        // File mapped, we bring it back from file
+                    } else {
+                        // ZERO new page
+                        if (perInstOutput) {
+                            output << " ZERO\n";
+                        }
+                    }
+                    if (perInstOutput) {
+                        output << " MAP " << frameIndex << '\n';
+                    }
                 }
             }
-            if (noSegFault) {
-                // Continue with rest of stuff
+            page.referenced(true);
+            if (inst == 'w') {
+                if (page.writeProtected()) {
+                    if (perInstOutput) {
+                        output << " SEGPROT\n";
+                    }
+                } else {
+                    page.modified(true);
+                }
             }
             ++currentInst;
         }
     }
-    void Simulation::processExist(int processNum)
+    void Simulation::processExist(int processNum, std::ostream& output, bool unmapOut)
     {
         auto& pageTable = d_processList[processNum].pageTable();
-        for (auto& pte : pageTable) {
+        for (int i = 0; i < pageTable.size(); ++i) {
+            auto& pte = pageTable[i];
             if (pte.present()) {
                 // Remove from global table
                 d_faultHandler->freeFrame(pte.assignedFrame());
+                if (unmapOut) {
+                    output << " UNMAP " << processNum << ':' << i << '\n';
+                    if (pte.fileMapped() && pte.modified()) {
+                        output << " FOUT\n";
+                    }
+                }
             }
         }
     }

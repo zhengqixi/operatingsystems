@@ -14,12 +14,17 @@ int main(int argc, char* argv[])
     int opt = -1;
     int numFrames = 128;
     int numPages = 64;
-    while ((opt = getopt(argc, argv, "a:o:")) != -1) {
+    while ((opt = getopt(argc, argv, "a:o:f:")) != -1) {
         switch (opt) {
         case 'a':
             faultAlgorithm = optarg[0];
             break;
         case 'o':
+            break;
+        case 'f':
+            numFrames = std::stoi(optarg);
+            break;
+        default:
             break;
         }
     }

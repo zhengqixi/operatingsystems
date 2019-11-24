@@ -25,7 +25,7 @@ namespace OperatingSystems {
     }
     bool Frame::mapped() const
     {
-        return !d_mappedProcess == -1;
+        return !(d_mappedProcess == -1);
     }
     FrameData& Frame::data()
     {

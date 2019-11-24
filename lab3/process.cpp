@@ -19,10 +19,6 @@ namespace OperatingSystems {
     {
         d_VMA.push_back(VMA(start, end, fileMapped, writeProtected));
     }
-    Page& Process::getPage(int address)
-    {
-        return d_pages[address];
-    }
     bool Process::setPageBits(int address)
     {
         Page& page = d_pages[address];
@@ -43,6 +39,10 @@ namespace OperatingSystems {
     std::vector<Page>& Process::pageTable()
     {
         return d_pages;
+    }
+    Page& Process::operator[](int address)
+    {
+        return d_pages[address];
     }
 }
 }

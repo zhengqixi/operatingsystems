@@ -9,7 +9,7 @@ namespace OperatingSystems {
     public:
         PageHandler(int numFrames);
         // Returns a frame from the global table by index
-        Frame& getFrame(unsigned int frameIndex);
+        Frame& operator[](unsigned int frameIndex);
         // Selects a frame from either free or victim for use
         unsigned int selectFrame();
         // Frees a frame and returns it to the free pool

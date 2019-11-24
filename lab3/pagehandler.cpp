@@ -10,7 +10,7 @@ namespace OperatingSystems {
             d_freeFrames.push(static_cast<unsigned int>(i));
         }
     }
-    Frame& PageHandler::getFrame(unsigned int frameIndex)
+    Frame& PageHandler::operator[](unsigned int frameIndex)
     {
         return d_globalFrame[frameIndex];
     }
