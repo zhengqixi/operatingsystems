@@ -12,6 +12,7 @@ namespace OperatingSystems {
         // on page fault, checks the page at the given address with the VMA and sets the bits based on the VMA
         // Returns true if page is valid, false if invalid page
         bool setPageBits(int address);
+        std::vector<Page>& pageTable();
 
     private:
         struct VMA {

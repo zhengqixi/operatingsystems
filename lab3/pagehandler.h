@@ -12,6 +12,9 @@ namespace OperatingSystems {
         Frame& getFrame(unsigned int frameIndex);
         // Selects a frame from either free or victim for use
         unsigned int selectFrame();
+        // Frees a frame and returns it to the free pool
+        void freeFrame(unsigned int frameIndex);
+        const std::vector<Frame>& globalFrames() const;
 
     private:
         virtual unsigned int selectVictimFrame() = 0;

@@ -17,6 +17,8 @@ namespace OperatingSystems {
         void pagedOut(bool set);
         unsigned int assignedFrame() const;
         void assignedFrame(unsigned int newFrame);
+        bool fileMapped() const;
+        void fileMapped(bool set);
         bool vma() const;
         void vma(bool set);
 
@@ -28,7 +30,8 @@ namespace OperatingSystems {
         unsigned int d_pagedOut : 1;
         unsigned int d_assignedFrame : 7;
         unsigned int d_vma : 1;
-        unsigned int d_padding : 19;
+        unsigned int d_fileMapped : 1;
+        unsigned int d_padding : 18;
     };
 }
 } // namespace NYU

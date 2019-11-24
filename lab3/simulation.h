@@ -12,12 +12,13 @@ namespace OperatingSystems {
     class Simulation {
     public:
         Simulation(std::istream& input, PageHandler* faultHandler, int numPages);
-        void run(std::ostream& output);
+        void run(std::ostream& output, bool perInstOutput);
 
     private:
         PageHandler* d_faultHandler = nullptr;
         bool nextInstruction(char& inst, int& operand);
         std::string nextLine();
+        void processExist(int processNum);
         std::istream& d_input;
         std::vector<Process> d_processList;
     };

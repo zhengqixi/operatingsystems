@@ -30,25 +30,50 @@ namespace OperatingSystems {
             }
         }
     }
-    void Simulation::run(std::ostream& output)
+    void Simulation::run(std::ostream& output, bool perInstOutput)
     {
+        unsigned long currentInst = 0;
         int currentProcess = -1;
         char inst = '\0';
         int operand = -1;
         while (nextInstruction(inst, operand)) {
+            if (perInstOutput) {
+                output << currentInst << ": ==> " << inst
+                       << ' ' << operand << '\n';
+            }
             if (inst == 'c') {
                 currentProcess = operand;
                 continue;
             }
             if (inst == 'e') {
+                processExist(currentProcess);
                 currentProcess = -1;
                 continue;
             }
             auto& page = d_processList[currentProcess].getPage(operand);
+            bool noSegFault = true;
             if (!page.present()) {
-                // Handle fault
+                if (!d_processList[currentProcess].setPageBits(operand)) {
+                    noSegFault = false;
+                    // SIGSEGV!
+                } else {
+                    // Handle fault
+                }
             }
-            // Continue with rest of stuff
+            if (noSegFault) {
+                // Continue with rest of stuff
+            }
+            ++currentInst;
+        }
+    }
+    void Simulation::processExist(int processNum)
+    {
+        auto& pageTable = d_processList[processNum].pageTable();
+        for (auto& pte : pageTable) {
+            if (pte.present()) {
+                // Remove from global table
+                d_faultHandler->freeFrame(pte.assignedFrame());
+            }
         }
     }
     bool Simulation::nextInstruction(char& inst, int& operand)

@@ -23,5 +23,14 @@ namespace OperatingSystems {
         }
         return selectVictimFrame();
     }
+    void PageHandler::freeFrame(unsigned int frameIndex)
+    {
+        d_globalFrame[frameIndex].unmap();
+        d_freeFrames.push(frameIndex);
+    }
+    const std::vector<Frame>& PageHandler::globalFrames() const
+    {
+        return d_globalFrame;
+    }
 }
 }

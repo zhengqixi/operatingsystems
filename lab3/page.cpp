@@ -71,6 +71,14 @@ namespace OperatingSystems {
         present(true);
         d_assignedFrame = newFrame;
     }
+    bool Page::fileMapped() const
+    {
+        return d_fileMapped == 1;
+    }
+    void Page::fileMapped(bool set)
+    {
+        d_fileMapped = static_cast<unsigned int>(set);
+    }
     bool Page::vma() const
     {
         return d_vma == 1;

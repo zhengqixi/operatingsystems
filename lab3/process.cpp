@@ -37,7 +37,12 @@ namespace OperatingSystems {
         }
         page.vma(true);
         page.writeProtected(validVMA->writeProtected);
+        page.fileMapped(validVMA->fileMapped);
         return true;
+    }
+    std::vector<Page>& Process::pageTable()
+    {
+        return d_pages;
     }
 }
 }
