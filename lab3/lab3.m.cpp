@@ -1,3 +1,4 @@
+#include "fifohandler.h"
 #include "pagehandler.h"
 #include "simulation.h"
 #include <fstream>
@@ -36,6 +37,7 @@ int main(int argc, char* argv[])
     PageHandler* faultHandler = nullptr;
     switch (faultAlgorithm) {
     case 'f':
+        faultHandler = new FifoHandler(numFrames);
         break;
     case 'r':
         break;
@@ -52,7 +54,8 @@ int main(int argc, char* argv[])
         return -1;
     }
     Simulation simulator(input, faultHandler, numPages);
-    simulator.run(std::cout);
+    output = true;
+    simulator.run(std::cout, output);
     // Determine algorithm
     return 0;
 }

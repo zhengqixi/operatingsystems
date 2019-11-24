@@ -16,7 +16,7 @@ namespace OperatingSystems {
         void freeFrame(unsigned int frameIndex);
         const std::vector<Frame>& globalFrames() const;
 
-    private:
+    protected:
         virtual unsigned int selectVictimFrame() = 0;
         std::vector<Frame> d_globalFrame;
         std::queue<unsigned int> d_freeFrames;
