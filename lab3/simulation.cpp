@@ -6,6 +6,7 @@
 #include <ostream>
 #include <sstream>
 #include <string>
+#include <utility>
 #include <vector>
 namespace NYU {
 namespace OperatingSystems {
@@ -30,7 +31,7 @@ namespace OperatingSystems {
             }
         }
     }
-    void Simulation::run(std::ostream& output, bool perInstOutput, bool finalFrameTable, bool finalPageTable, bool summary)
+    void Simulation::run(std::ostream& output, bool perInstOutput, bool finalFrameTable, bool finalPageTable, bool processSummary, bool summary)
     {
         unsigned long long cycleCost = 0;
         unsigned long long contextSwitches = 0;
@@ -52,11 +53,17 @@ namespace OperatingSystems {
                 continue;
             }
             if (inst == 'e') {
-                processExist(currentProcess, output, perInstOutput);
+                auto pageData = processExist(currentProcess, output, perInstOutput);
+                int unmapedPages = pageData.first;
+                int fouted = pageData.second;
+                d_processList[currentProcess].unmaps() += unmapedPages;
+                d_processList[currentProcess].fouts() += fouted;
+                cycleCost += d_maps * unmapedPages;
+                cycleCost += d_fileInOut * fouted;
+                cycleCost += d_processExist;
                 currentProcess = -1;
                 ++currentInst;
                 ++processExists;
-                cycleCost += d_processExist;
                 continue;
             }
             auto& page = d_processList[currentProcess][operand];
@@ -65,6 +72,7 @@ namespace OperatingSystems {
                     // SEGV
                     ++currentInst;
                     cycleCost += d_segV;
+                    ++d_processList[currentProcess].segvs();
                     if (perInstOutput) {
                         output << " SEGV\n";
                     }
@@ -76,6 +84,7 @@ namespace OperatingSystems {
                         auto mappedProcess = frameEntry.mappedProcess();
                         auto mappedPage = frameEntry.mappedPage();
                         cycleCost += d_maps;
+                        ++d_processList[mappedProcess].unmaps();
                         if (perInstOutput) {
                             output << " UNMAP " << mappedProcess << ':' << mappedPage << '\n';
                         }
@@ -83,11 +92,13 @@ namespace OperatingSystems {
                         if (sadpage.modified()) {
                             if (sadpage.fileMapped()) {
                                 cycleCost += d_fileInOut;
+                                ++d_processList[mappedProcess].fouts();
                                 if (perInstOutput) {
                                     output << " FOUT\n";
                                 }
                             } else {
                                 cycleCost += d_pageInOut;
+                                ++d_processList[mappedProcess].outs();
                                 if (perInstOutput) {
                                     output << " OUT\n";
                                 }
@@ -104,11 +115,13 @@ namespace OperatingSystems {
                         // Previously paged out
                         // Fetch from swap
                         cycleCost += d_pageInOut;
+                        ++d_processList[currentProcess].ins();
                         if (perInstOutput) {
                             output << " IN\n";
                         }
                     } else if (page.fileMapped()) {
                         cycleCost += d_fileInOut;
+                        ++d_processList[currentProcess].fins();
                         if (perInstOutput) {
                             output << " FIN\n";
                         }
@@ -116,20 +129,24 @@ namespace OperatingSystems {
                     } else {
                         // ZERO new page
                         cycleCost += d_zero;
+                        ++d_processList[currentProcess].zeros();
                         if (perInstOutput) {
                             output << " ZERO\n";
                         }
                     }
                     cycleCost += d_maps;
+                    ++d_processList[currentProcess].maps();
                     if (perInstOutput) {
                         output << " MAP " << frameIndex << '\n';
                     }
                 }
             }
             page.referenced(true);
+            cycleCost += d_access;
             if (inst == 'w') {
                 if (page.writeProtected()) {
                     cycleCost += d_segProt;
+                    ++d_processList[currentProcess].segprots();
                     if (perInstOutput) {
                         output << " SEGPROT\n";
                     }
@@ -145,28 +162,39 @@ namespace OperatingSystems {
         if (finalFrameTable) {
             printFrametable(output);
         }
+        if (processSummary) {
+            printAllProcessSummary(output);
+        }
         if (summary) {
             output << "TOTALCOST " << currentInst << ' ' << contextSwitches
                    << ' ' << processExists << ' ' << cycleCost << '\n';
         }
     }
-    void Simulation::processExist(int processNum, std::ostream& output, bool unmapOut)
+    std::pair<int, int> Simulation::processExist(int processNum, std::ostream& output, bool unmapOut)
     {
+        int unmappedPages = 0;
+        int fout = 0;
+        if (unmapOut) {
+            output << "EXIT current process " << processNum << '\n';
+        }
         auto& pageTable = d_processList[processNum].pageTable();
         for (int i = 0; i < pageTable.size(); ++i) {
             auto& pte = pageTable[i];
             if (pte.present()) {
                 // Remove from global table
+                ++unmappedPages;
                 d_faultHandler->freeFrame(pte.assignedFrame());
                 if (unmapOut) {
                     output << " UNMAP " << processNum << ':' << i << '\n';
                     if (pte.fileMapped() && pte.modified()) {
+                        ++fout;
                         output << " FOUT\n";
                     }
                 }
             }
             pte.clear();
         }
+        return std::make_pair(unmappedPages, fout);
     }
     void Simulation::printFrametable(std::ostream& output)
     {
@@ -209,6 +237,20 @@ namespace OperatingSystems {
     {
         for (int i = 0; i < d_processList.size(); ++i) {
             printProcessPageTable(i, output);
+        }
+    }
+    void Simulation::printProcessSummary(int processNum, std::ostream& output)
+    {
+        Process& process = d_processList[processNum];
+        output << "PROC[" << processNum << "]: U=" << process.unmaps()
+               << " M=" << process.maps() << " I=" << process.ins() << " O=" << process.outs()
+               << " FI=" << process.fins() << " FO=" << process.fouts() << " Z=" << process.zeros()
+               << " SV=" << process.segvs() << " SP=" << process.segprots() << '\n';
+    }
+    void Simulation::printAllProcessSummary(std::ostream& output)
+    {
+        for (int i = 0; i < d_processList.size(); ++i) {
+            printProcessSummary(i, output);
         }
     }
     bool Simulation::nextInstruction(char& inst, int& operand)

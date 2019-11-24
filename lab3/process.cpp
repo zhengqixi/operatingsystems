@@ -44,5 +44,41 @@ namespace OperatingSystems {
     {
         return d_pages[address];
     }
+    unsigned long& Process::unmaps()
+    {
+        return d_unmaps;
+    }
+    unsigned long& Process::maps()
+    {
+        return d_maps;
+    }
+    unsigned long& Process::ins()
+    {
+        return d_ins;
+    }
+    unsigned long& Process::outs()
+    {
+        return d_outs;
+    }
+    unsigned long& Process::fins()
+    {
+        return d_fins;
+    }
+    unsigned long& Process::fouts()
+    {
+        return d_fouts;
+    }
+    unsigned long& Process::zeros()
+    {
+        return d_zeros;
+    }
+    unsigned long& Process::segvs()
+    {
+        return d_segvs;
+    }
+    unsigned long& Process::segprots()
+    {
+        return d_segprots;
+    }
 }
 }

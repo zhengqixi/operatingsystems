@@ -78,7 +78,7 @@ int main(int argc, char* argv[])
         return -1;
     }
     Simulation simulator(input, faultHandler, numPages);
-    simulator.run(std::cout, output, frameTable, pageTable, summary);
+    simulator.run(std::cout, output, frameTable, pageTable, true, summary);
     // Determine algorithm
     return 0;
 }
