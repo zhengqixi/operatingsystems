@@ -9,9 +9,8 @@
 #include <vector>
 namespace NYU {
 namespace OperatingSystems {
-    Simulation::Simulation(std::istream& input, std::ostream& output, PageHandler* faultHandler)
+    Simulation::Simulation(std::istream& input, PageHandler* faultHandler, int numPages)
         : d_faultHandler{ faultHandler }
-        , d_output{ output }
         , d_input{ input }
     {
         // Create process list
@@ -19,7 +18,7 @@ namespace OperatingSystems {
         int processCount = std::stoi(nextLine());
         d_processList.reserve(processCount);
         for (int i = 0; i < processCount; ++i) {
-            d_processList.push_back(Process());
+            d_processList.push_back(Process(numPages));
             int vmaCount = std::stoi(nextLine());
             for (int j = 0; j < vmaCount; ++j) {
                 std::stringstream lineParser(nextLine());
@@ -31,7 +30,7 @@ namespace OperatingSystems {
             }
         }
     }
-    void Simulation::run()
+    void Simulation::run(std::ostream& output)
     {
         int currentProcess = -1;
         char inst = '\0';

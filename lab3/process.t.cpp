@@ -4,7 +4,7 @@ int main()
 {
     using namespace NYU::OperatingSystems;
     using namespace std;
-    Process newProcess;
+    Process newProcess(64);
     newProcess.addVMA(0, 12, false, true);
     newProcess.addVMA(13, 18, true, false);
     auto& page = newProcess.getPage(4);

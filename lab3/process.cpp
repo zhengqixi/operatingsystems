@@ -1,12 +1,11 @@
 #include "process.h"
-#include "constants.h"
 #include "page.h"
 #include <algorithm>
 #include <vector>
 namespace NYU {
 namespace OperatingSystems {
-    Process::Process()
-        : d_pages{ maxPages }
+    Process::Process(int numPages)
+        : d_pages{ static_cast<unsigned long int>(numPages) }
     {
     }
     Process::VMA::VMA(int start, int end, bool fileMapped, bool writeProtected)

@@ -1,12 +1,14 @@
 #include "pagehandler.h"
-#include "constants.h"
 #include "frame.h"
 #include <vector>
 namespace NYU {
 namespace OperatingSystems {
-    PageHandler::PageHandler()
-        : d_globalFrame{ maxFrames }
+    PageHandler::PageHandler(int numFrames)
+        : d_globalFrame{ static_cast<unsigned long int>(numFrames) }
     {
+        for (int i = 0; i < numFrames; ++i) {
+            d_freeFrames.push(static_cast<unsigned int>(i));
+        }
     }
     Frame& PageHandler::getFrame(unsigned int frameIndex)
     {

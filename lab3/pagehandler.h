@@ -7,7 +7,7 @@ namespace NYU {
 namespace OperatingSystems {
     class PageHandler {
     public:
-        PageHandler();
+        PageHandler(int numFrames);
         // Returns a frame from the global table by index
         Frame& getFrame(unsigned int frameIndex);
         // Selects a frame from either free or victim for use

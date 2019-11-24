@@ -6,7 +6,7 @@ namespace NYU {
 namespace OperatingSystems {
     class Process {
     public:
-        Process();
+        Process(int numPages);
         void addVMA(int start, int end, bool fileMapped, bool writeProtected);
         Page& getPage(int address);
         // on page fault, checks the page at the given address with the VMA and sets the bits based on the VMA
