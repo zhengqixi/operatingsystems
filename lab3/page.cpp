@@ -87,5 +87,16 @@ namespace OperatingSystems {
     {
         d_vma = static_cast<unsigned int>(set);
     }
+    void Page::clear()
+    {
+        d_present = 0;
+        d_writeProtected = 0;
+        d_modified = 0;
+        d_referenced = 0;
+        d_pagedOut = 0;
+        d_assignedFrame = 0;
+        d_vma = 0;
+        d_fileMapped = 0;
+    }
 }
 } // namespace NYU

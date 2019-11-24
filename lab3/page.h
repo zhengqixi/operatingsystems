@@ -21,6 +21,7 @@ namespace OperatingSystems {
         void fileMapped(bool set);
         bool vma() const;
         void vma(bool set);
+        void clear();
 
     private:
         unsigned int d_present : 1;

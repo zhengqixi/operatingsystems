@@ -19,8 +19,27 @@ int main(int argc, char* argv[])
         case 'a':
             faultAlgorithm = optarg[0];
             break;
-        case 'o':
+        case 'o': {
+            std::string options(optarg);
+            for (char c : options) {
+                switch (c) {
+                case 'O':
+                    output = true;
+                    break;
+                case 'P':
+                    pageTable = true;
+                    break;
+                case 'F':
+                    frameTable = true;
+                    break;
+                case 'S':
+                    summary = true;
+                    break;
+                }
+            }
             break;
+        }
+
         case 'f':
             numFrames = std::stoi(optarg);
             break;
@@ -59,8 +78,7 @@ int main(int argc, char* argv[])
         return -1;
     }
     Simulation simulator(input, faultHandler, numPages);
-    output = true;
-    simulator.run(std::cout, output);
+    simulator.run(std::cout, output, frameTable, pageTable, summary);
     // Determine algorithm
     return 0;
 }
