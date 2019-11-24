@@ -14,14 +14,14 @@ namespace OperatingSystems {
     {
         return d_globalFrame[frameIndex];
     }
-    unsigned int PageHandler::selectFrame()
+    unsigned int PageHandler::selectFrame(unsigned long long currentInst, std::vector<Process>& processList)
     {
         if (!d_freeFrames.empty()) {
             unsigned int next = d_freeFrames.front();
             d_freeFrames.pop();
             return next;
         }
-        return selectVictimFrame();
+        return selectVictimFrame(currentInst, processList);
     }
     void PageHandler::freeFrame(unsigned int frameIndex)
     {

@@ -78,7 +78,7 @@ namespace OperatingSystems {
                     }
                     continue;
                 } else {
-                    auto frameIndex = d_faultHandler->selectFrame();
+                    auto frameIndex = d_faultHandler->selectFrame(currentInst, d_processList);
                     auto& frameEntry = (*d_faultHandler)[frameIndex];
                     if (frameEntry.mapped()) {
                         auto mappedProcess = frameEntry.mappedProcess();

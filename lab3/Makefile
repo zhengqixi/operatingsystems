@@ -4,7 +4,7 @@ fifohandler.o: fifohandler.h fifohandler.cpp pagehandler.h
 	g++ -c fifohandler.h fifohandler.cpp
 simulation.o: simulation.h simulation.cpp page.h pagehandler.h process.h
 	g++ -c simulation.h simulation.cpp
-pagehandler.o: pagehandler.h pagehandler.cpp frame.h
+pagehandler.o: pagehandler.h pagehandler.cpp frame.h process.h
 	g++ -c pagehandler.h pagehandler.cpp
 frame.o: frame.h frame.cpp
 	g++ -c frame.h frame.cpp
