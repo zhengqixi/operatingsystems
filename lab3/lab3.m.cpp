@@ -1,5 +1,6 @@
 #include "fifohandler.h"
 #include "pagehandler.h"
+#include "randomhandler.h"
 #include "simulation.h"
 #include <fstream>
 #include <iostream>
@@ -57,13 +58,13 @@ int main(int argc, char* argv[])
     }
     std::ifstream input(argv[optind]);
     ++optind;
-    std::ifstream randomFile(argv[optind]);
     PageHandler* faultHandler = nullptr;
     switch (faultAlgorithm) {
     case 'f':
         faultHandler = new FifoHandler(numFrames);
         break;
     case 'r':
+        faultHandler = new RandomHandler(numFrames, argv[optind]);
         break;
     case 'c':
         break;
