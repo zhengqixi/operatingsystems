@@ -1,3 +1,4 @@
+#include "clockhandler.h"
 #include "fifohandler.h"
 #include "pagehandler.h"
 #include "randomhandler.h"
@@ -67,6 +68,7 @@ int main(int argc, char* argv[])
         faultHandler = new RandomHandler(numFrames, argv[optind]);
         break;
     case 'c':
+        faultHandler = new ClockHandler(numFrames);
         break;
     case 'e':
         break;

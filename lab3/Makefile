@@ -1,5 +1,7 @@
-all: simulation.o pagehandler.o frame.o process.o page.o fifohandler.o randomhandler.o
+all: simulation.o pagehandler.o frame.o process.o page.o fifohandler.o randomhandler.o clockhandler.o
 	g++ -o mmu lab3.m.cpp *.o
+clockhandler.o: clockhandler.h clockhandler.cpp pagehandler.h
+	g++ -c clockhandler.h clockhandler.cpp
 randomhandler.o: randomhandler.h randomhandler.cpp pagehandler.h
 	g++ -c randomhandler.h randomhandler.cpp
 fifohandler.o: fifohandler.h fifohandler.cpp pagehandler.h
