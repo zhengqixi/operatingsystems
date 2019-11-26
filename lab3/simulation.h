@@ -13,7 +13,7 @@ namespace OperatingSystems {
     class Simulation {
     public:
         Simulation(std::istream& input, PageHandler* faultHandler, int numPages);
-        void run(std::ostream& output, bool perInstOutput, bool finalFrameTable, bool finalPageTable, bool processSummary, bool summary);
+        void run(std::ostream& output, bool perInstOutput, bool finalFrameTable, bool finalPageTable, bool summary);
 
     private:
         PageHandler* d_faultHandler = nullptr;

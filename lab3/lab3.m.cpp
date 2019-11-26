@@ -1,5 +1,6 @@
 #include "clockhandler.h"
 #include "fifohandler.h"
+#include "nruhandler.h"
 #include "pagehandler.h"
 #include "randomhandler.h"
 #include "simulation.h"
@@ -12,7 +13,7 @@ int main(int argc, char* argv[])
     using namespace NYU::OperatingSystems;
     char faultAlgorithm = '\0';
     bool output, pageTable, frameTable, summary, verboseCurrPageTable, verboseAllPageTable,
-        verboseFrameTable, verboseAging = false;
+        verboseFrameTable, verboseFault = false;
     int opt = -1;
     int numFrames = 128;
     int numPages = 64;
@@ -36,6 +37,9 @@ int main(int argc, char* argv[])
                     break;
                 case 'S':
                     summary = true;
+                    break;
+                case 'a':
+                    verboseFault = true;
                     break;
                 }
             }
@@ -71,6 +75,7 @@ int main(int argc, char* argv[])
         faultHandler = new ClockHandler(numFrames);
         break;
     case 'e':
+        faultHandler = new NRUHandler(numFrames, 50, verboseFault, std::cout);
         break;
     case 'a':
         break;
@@ -81,7 +86,7 @@ int main(int argc, char* argv[])
         return -1;
     }
     Simulation simulator(input, faultHandler, numPages);
-    simulator.run(std::cout, output, frameTable, pageTable, true, summary);
+    simulator.run(std::cout, output, frameTable, pageTable, summary);
     // Determine algorithm
     return 0;
 }

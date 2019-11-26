@@ -31,7 +31,7 @@ namespace OperatingSystems {
             }
         }
     }
-    void Simulation::run(std::ostream& output, bool perInstOutput, bool finalFrameTable, bool finalPageTable, bool processSummary, bool summary)
+    void Simulation::run(std::ostream& output, bool perInstOutput, bool finalFrameTable, bool finalPageTable, bool summary)
     {
         unsigned long long cycleCost = 0;
         unsigned long long contextSwitches = 0;
@@ -162,7 +162,7 @@ namespace OperatingSystems {
         if (finalFrameTable) {
             printFrametable(output);
         }
-        if (processSummary) {
+        if (summary) {
             printAllProcessSummary(output);
         }
         if (summary) {
