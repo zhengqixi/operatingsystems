@@ -66,6 +66,7 @@ namespace OperatingSystems {
                 ++processExists;
                 continue;
             }
+            cycleCost += d_access;
             auto& page = d_processList[currentProcess][operand];
             if (!page.present()) {
                 if (!d_processList[currentProcess].setPageBits(operand)) {
@@ -142,7 +143,6 @@ namespace OperatingSystems {
                 }
             }
             page.referenced(true);
-            cycleCost += d_access;
             if (inst == 'w') {
                 if (page.writeProtected()) {
                     cycleCost += d_segProt;
