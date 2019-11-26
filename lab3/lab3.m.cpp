@@ -14,8 +14,7 @@ int main(int argc, char* argv[])
 {
     using namespace NYU::OperatingSystems;
     char faultAlgorithm = '\0';
-    bool output, pageTable, frameTable, summary, verboseCurrPageTable, verboseAllPageTable,
-        verboseFrameTable, verboseFault = false;
+    bool output, pageTable, frameTable, summary, verboseFault = false;
     int opt = -1;
     int numFrames = 128;
     int numPages = 64;
@@ -55,8 +54,8 @@ int main(int argc, char* argv[])
             break;
         }
     }
-    if (argc - optind < 2) {
-        std::cerr << "Not enough arguments\n";
+    if (argc - optind < 1) {
+        std::cerr << "Not enough arguments. Missing input file!\n";
         return -1;
     }
     if (faultAlgorithm == '\0') {
@@ -71,6 +70,10 @@ int main(int argc, char* argv[])
         faultHandler = new FifoHandler(numFrames);
         break;
     case 'r':
+        if (optind == argc) {
+            std::cerr << "Missing rfile for random fault handler!\n";
+            return -1;
+        }
         faultHandler = new RandomHandler(numFrames, argv[optind]);
         break;
     case 'c':
