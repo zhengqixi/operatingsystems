@@ -14,7 +14,7 @@ namespace OperatingSystems {
         // Selects a frame from either free or victim for use
         unsigned int selectFrame(unsigned long long currentInst, std::vector<Process>& processList);
         // Frees a frame and returns it to the free pool
-        void freeFrame(unsigned int frameIndex);
+        virtual void freeFrame(unsigned int frameIndex);
         const std::vector<Frame>& globalFrames() const;
 
     protected:
