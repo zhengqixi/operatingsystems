@@ -20,8 +20,8 @@ namespace OperatingSystems {
     }
     unsigned int AgeHandler::selectVictimFrame(unsigned long long currentInst, std::vector<Process>& processList)
     {
+        unsigned int selectedFrame = d_offset;
         unsigned int hand = d_offset;
-        unsigned int selectedFrame = 0;
         unsigned int lowestAge = std::numeric_limits<unsigned int>::max();
         if (d_verbose) {
             unsigned int stoppingPoint = hand == 0 ? d_globalFrame.size() - 1 : hand - 1;

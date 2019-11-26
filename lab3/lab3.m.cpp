@@ -5,6 +5,7 @@
 #include "pagehandler.h"
 #include "randomhandler.h"
 #include "simulation.h"
+#include "workingsethandler.h"
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -82,6 +83,7 @@ int main(int argc, char* argv[])
         faultHandler = new AgeHandler(numFrames, verboseFault, std::cout);
         break;
     case 'w':
+        faultHandler = new WorkingSetHandler(numFrames, 50, verboseFault, std::cout);
         break;
     default:
         std::cerr << "Not a valid algorithm:" << faultAlgorithm << '\n';

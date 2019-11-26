@@ -17,9 +17,7 @@ namespace OperatingSystems {
     unsigned int PageHandler::selectFrame(unsigned long long currentInst, std::vector<Process>& processList)
     {
         if (!d_freeFrames.empty()) {
-            unsigned int next = d_freeFrames.front();
-            d_freeFrames.pop();
-            return next;
+            return fetchFromFree(currentInst, processList);
         }
         return selectVictimFrame(currentInst, processList);
     }
@@ -27,6 +25,12 @@ namespace OperatingSystems {
     {
         d_globalFrame[frameIndex].unmap();
         d_freeFrames.push(frameIndex);
+    }
+    unsigned int PageHandler::fetchFromFree(unsigned long long currentInst, std::vector<Process>& processList)
+    {
+        unsigned int next = d_freeFrames.front();
+        d_freeFrames.pop();
+        return next;
     }
     const std::vector<Frame>& PageHandler::globalFrames() const
     {
