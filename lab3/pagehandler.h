@@ -19,6 +19,7 @@ namespace OperatingSystems {
 
     protected:
         virtual unsigned int selectVictimFrame(unsigned long long currentInst, std::vector<Process>& processList) = 0;
+        unsigned int d_offset = 0;
         std::vector<Frame> d_globalFrame;
         std::queue<unsigned int> d_freeFrames;
     };

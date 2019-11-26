@@ -12,7 +12,6 @@ namespace OperatingSystems {
         void freeFrame(unsigned int frameIndex);
 
     private:
-        unsigned int d_offset = 0;
         std::vector<unsigned int> d_ages;
         std::ostream& d_output;
         bool d_verbose;

@@ -10,7 +10,6 @@ namespace OperatingSystems {
         ClockHandler(int numFrames);
 
     private:
-        unsigned int d_currentIndex = 0;
         unsigned int selectVictimFrame(unsigned long long currentInst, std::vector<Process>& processList);
     };
 }

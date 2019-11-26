@@ -11,8 +11,8 @@ namespace OperatingSystems {
 
     unsigned int FifoHandler::selectVictimFrame(unsigned long long currentInst, std::vector<Process>& processList)
     {
-        auto index = d_currentIndex;
-        d_currentIndex = (++d_currentIndex) % d_globalFrame.size();
+        auto index = d_offset;
+        d_offset = (d_offset + 1) % d_globalFrame.size();
         return index;
     }
 }

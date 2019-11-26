@@ -12,7 +12,6 @@ namespace OperatingSystems {
 
     private:
         std::vector<int> d_randomBuff;
-        int d_offset = 0;
         unsigned int selectVictimFrame(unsigned long long currentInst, std::vector<Process>& processList);
     };
 }

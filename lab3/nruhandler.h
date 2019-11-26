@@ -15,7 +15,6 @@ namespace OperatingSystems {
         int getClass(const Page& page) const;
         unsigned long long d_freq;
         long long d_lastScan = -1;
-        unsigned int d_offset = 0;
         bool d_verbose;
         std::ostream& d_output;
         unsigned int selectVictimFrame(unsigned long long currentInst, std::vector<Process>& processList);
