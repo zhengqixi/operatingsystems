@@ -6,7 +6,7 @@
 namespace NYU {
 namespace OperatingSystems {
     RandomHandler::RandomHandler(int numFrames, const std::string& randomFile)
-        : PageHandler{ numFrames }
+        : PageHandler( numFrames )
     {
         std::ifstream inputStream(randomFile);
         int totalCount;

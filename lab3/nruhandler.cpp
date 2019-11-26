@@ -6,7 +6,7 @@
 namespace NYU {
 namespace OperatingSystems {
     NRUHandler::NRUHandler(int numFrames, int scanFreq, bool verbose, std::ostream& output)
-        : PageHandler{ numFrames }
+        : PageHandler(numFrames)
         , d_freq{ static_cast<unsigned int>(scanFreq) }
         , d_verbose{ verbose }
         , d_output{ output }

@@ -11,8 +11,8 @@
 namespace NYU {
 namespace OperatingSystems {
     Simulation::Simulation(std::istream& input, PageHandler* faultHandler, int numPages)
-        : d_faultHandler{ faultHandler }
-        , d_input{ input }
+        : d_faultHandler(faultHandler)
+        , d_input(input)
     {
         // Create process list
         // No need to worry about bad inputs :)

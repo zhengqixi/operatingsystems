@@ -5,7 +5,7 @@
 namespace NYU {
 namespace OperatingSystems {
     ClockHandler::ClockHandler(int numFrames)
-        : PageHandler{ numFrames }
+        : PageHandler( numFrames )
     {
     }
 

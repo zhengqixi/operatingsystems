@@ -1,3 +1,4 @@
+#include "agehandler.h"
 #include "clockhandler.h"
 #include "fifohandler.h"
 #include "nruhandler.h"
@@ -78,6 +79,7 @@ int main(int argc, char* argv[])
         faultHandler = new NRUHandler(numFrames, 50, verboseFault, std::cout);
         break;
     case 'a':
+        faultHandler = new AgeHandler(numFrames);
         break;
     case 'w':
         break;
