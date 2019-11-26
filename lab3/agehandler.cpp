@@ -23,6 +23,11 @@ namespace OperatingSystems {
         unsigned int hand = d_offset;
         unsigned int selectedFrame = 0;
         unsigned int lowestAge = std::numeric_limits<unsigned int>::max();
+        if (d_verbose) {
+            unsigned int stoppingPoint = hand == 0 ? d_globalFrame.size() - 1 : hand - 1;
+            d_output << "ASELECT " << hand << '-' << stoppingPoint;
+            d_output << " | ";
+        }
         do {
             int process = d_globalFrame[hand].mappedProcess();
             int page = d_globalFrame[hand].mappedPage();
@@ -36,11 +41,19 @@ namespace OperatingSystems {
                 lowestAge = age;
                 selectedFrame = hand;
             }
+            if (d_verbose) {
+                d_output << hand << ':';
+                d_output << age;
+                d_output << ' ';
+            }
             hand = (hand + 1) % d_globalFrame.size();
 
         } while (hand != d_offset);
         d_offset = (selectedFrame + 1) % d_globalFrame.size();
         d_ages[selectedFrame] = 0;
+        if (d_verbose) {
+            d_output << "| " << selectedFrame << '\n';
+        }
         return selectedFrame;
     }
 }

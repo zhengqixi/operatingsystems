@@ -27,9 +27,5 @@ namespace OperatingSystems {
     {
         return !(d_mappedProcess == -1);
     }
-    FrameData& Frame::data()
-    {
-        return d_data;
-    }
 }
 }
