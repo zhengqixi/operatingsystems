@@ -1,5 +1,9 @@
-all: lab4.m.cpp simulation.o scheduler.o request.o
+all: lab4.m.cpp simulation.o scheduler.o request.o fifo.o
 	g++ -o iosched lab4.m.cpp *.o
+debug:
+	g++ -ggdb -o iosched *.cpp *.h
+fifo.o: fifo.h fifo.cpp simulation.h
+	g++ -c fifo.h fifo.cpp
 simulation.o: simulation.h simulation.cpp
 	g++ -c simulation.h simulation.cpp
 scheduler.o: scheduler.h scheduler.cpp

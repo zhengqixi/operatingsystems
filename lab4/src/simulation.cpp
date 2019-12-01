@@ -3,6 +3,7 @@
 #include <istream>
 #include <ostream>
 #include <sstream>
+#include <stdio.h>
 #include <string>
 namespace NYU {
 namespace OperatingSystems {
@@ -21,6 +22,7 @@ namespace OperatingSystems {
             Request* request = new Request(id, arrival, track);
             d_requests.push_back(request);
             d_notArrived.push(request);
+            ++id;
         }
     }
     Simulation::~Simulation()
@@ -36,19 +38,23 @@ namespace OperatingSystems {
         // start time of current request
         unsigned int currentTime = 0;
         unsigned int headPosition = 0;
-        while (!d_scheduler->empty() && !d_notArrived.empty() && currentRequest != nullptr) {
-            if (d_notArrived.front()->arriveTime() == currentTime) {
+        unsigned int totalMovement = 0;
+        while (!(d_scheduler->empty() && d_notArrived.empty() && currentRequest == nullptr)) {
+            if (!d_notArrived.empty() && d_notArrived.front()->arriveTime() == currentTime) {
                 d_scheduler->addToQueue(d_notArrived.front());
                 d_notArrived.pop();
             }
-            if (currentRequest != nullptr && (headPosition == currentRequest->track())) {
-                currentRequest->endTime() = currentTime;
-                currentRequest = nullptr;
-            } else if (currentRequest != nullptr) {
+            if (currentRequest != nullptr) {
                 if (currentRequest->track() > headPosition) {
                     ++headPosition;
-                } else {
+                    ++totalMovement;
+                } else if (currentRequest->track() < headPosition) {
                     --headPosition;
+                    ++totalMovement;
+                }
+                if (headPosition == currentRequest->track()) {
+                    currentRequest->endTime() = currentTime;
+                    currentRequest = nullptr;
                 }
             }
             if (currentRequest == nullptr && !d_scheduler->empty()) {
@@ -57,6 +63,23 @@ namespace OperatingSystems {
             }
             ++currentTime;
         }
+        --currentTime;
+        double totTurn = 0;
+        double totWait = 0;
+        unsigned int maxWait = 0;
+        for (auto ptr : d_requests) {
+            output << (*ptr);
+            totTurn += ptr->endTime() - ptr->arriveTime();
+            unsigned int waitTime = ptr->startTime() - ptr->arriveTime();
+            maxWait = waitTime > maxWait ? waitTime : maxWait;
+            totWait += waitTime;
+        }
+        double avgTurn = totTurn / d_requests.size();
+        double avgWait = totWait / d_requests.size();
+        char buffer[256];
+        sprintf(buffer, "SUM: %d %d %.2lf %.2lf %d\n",
+            currentTime, totalMovement, avgTurn, avgWait, maxWait);
+        output << buffer;
     }
 
     std::string Simulation::nextLine(std::istream& input) const

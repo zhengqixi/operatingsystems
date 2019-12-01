@@ -6,11 +6,8 @@ namespace OperatingSystems {
     class Scheduler {
     public:
         virtual Request* getRequest(unsigned int headPosition) = 0;
-        virtual void addToQueue(Request* newRequest);
-        bool empty() const;
-
-    private:
-        unsigned int d_currentRequests = 0;
+        virtual void addToQueue(Request* newRequest) = 0;
+        virtual bool empty() const = 0;
     };
 }
 }
