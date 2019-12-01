@@ -44,7 +44,7 @@ namespace OperatingSystems {
             if (currentRequest != nullptr && (headPosition == currentRequest->track())) {
                 currentRequest->endTime() = currentTime;
                 currentRequest = nullptr;
-            } else {
+            } else if (currentRequest != nullptr) {
                 if (currentRequest->track() > headPosition) {
                     ++headPosition;
                 } else {
