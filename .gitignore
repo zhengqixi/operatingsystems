@@ -15,3 +15,5 @@ lab3/scripts/*
 lab3/inputs/*
 lab3/refout/*
 mmu
+lab4/src/iosched
+lab4/TestData
