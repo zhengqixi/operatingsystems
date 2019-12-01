@@ -8,11 +8,11 @@ namespace OperatingSystems {
         , d_track(track)
     {
     }
-    unsigned int Request::arriveTime()
+    unsigned int Request::arriveTime() const
     {
         return d_arriveTime;
     }
-    unsigned int Request::track()
+    unsigned int Request::track() const
     {
         return d_track;
     }

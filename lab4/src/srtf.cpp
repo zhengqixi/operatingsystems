@@ -1,23 +1,20 @@
 #include "srtf.h"
 #include "request.h"
 #include "scheduler.h"
+#include <algorithm>
 #include <limits>
 #include <list>
 namespace NYU {
 namespace OperatingSystems {
     Request* SRTF::getRequest()
     {
-        unsigned int smallestDiff = std::numeric_limits<unsigned int>::max();
-        auto iter = d_queue.begin();
-        for (auto i = d_queue.begin(); i != d_queue.end(); ++i) {
-            unsigned int track = (*i)->track();
-            unsigned int difference = 0;
-            difference = track > d_lastTrackPosition ? track - d_lastTrackPosition : d_lastTrackPosition - track;
-            if (difference < smallestDiff) {
-                iter = i;
-                smallestDiff = difference;
-            }
-        }
+        unsigned int lastPosition = d_lastTrackPosition;
+        auto iter = std::min_element(d_queue.begin(), d_queue.end(),
+            [lastPosition](const Request* const a, const Request* const b) {
+                unsigned int differenceA = a->track() > lastPosition ? a->track() - lastPosition : lastPosition - a->track();
+                unsigned int differenceB = b->track() > lastPosition ? b->track() - lastPosition : lastPosition - b->track();
+                return differenceA < differenceB;
+            });
         d_queue.erase(iter);
         Request* selected = *iter;
         d_lastTrackPosition = selected->track();

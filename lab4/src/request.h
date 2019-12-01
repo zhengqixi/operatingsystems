@@ -6,8 +6,8 @@ namespace OperatingSystems {
     class Request {
     public:
         Request(unsigned int id, unsigned int arriveTime, unsigned int track);
-        unsigned int arriveTime();
-        unsigned int track();
+        unsigned int arriveTime() const;
+        unsigned int track() const;
         unsigned int& startTime();
         unsigned int& endTime();
         friend std::ostream& operator<<(std::ostream& output, const Request& request);
