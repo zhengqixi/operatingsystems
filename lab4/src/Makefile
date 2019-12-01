@@ -1,0 +1,12 @@
+all: lab4.m.cpp simulation.o scheduler.o request.o
+	g++ -o iosched lab4.m.cpp *.o
+simulation.o: simulation.h simulation.cpp
+	g++ -c simulation.h simulation.cpp
+scheduler.o: scheduler.h scheduler.cpp
+	g++ -c scheduler.h scheduler.cpp
+request.o: request.h request.cpp
+	g++ -c request.h request.cpp
+zip: *.cpp *.h Makefile README.md
+	tar -cvf lab4.tar *.cpp *.h Makefile README.md
+clean:
+	rm -f *.out *.o *.gch lab4.tar iosched
