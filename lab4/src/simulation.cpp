@@ -57,9 +57,15 @@ namespace OperatingSystems {
                     currentRequest = nullptr;
                 }
             }
-            if (currentRequest == nullptr && !d_scheduler->empty()) {
-                currentRequest = d_scheduler->getRequest(headPosition);
+            while (currentRequest == nullptr && !d_scheduler->empty()) {
+                currentRequest = d_scheduler->getRequest();
                 currentRequest->startTime() = currentTime;
+                if (currentRequest->track() == headPosition) {
+                    currentRequest->endTime() = currentTime;
+                    currentRequest = nullptr;
+                } else {
+                    break;
+                }
             }
             ++currentTime;
         }

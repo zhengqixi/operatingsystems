@@ -5,7 +5,7 @@ namespace NYU {
 namespace OperatingSystems {
     class Scheduler {
     public:
-        virtual Request* getRequest(unsigned int headPosition) = 0;
+        virtual Request* getRequest() = 0;
         virtual void addToQueue(Request* newRequest) = 0;
         virtual bool empty() const = 0;
     };

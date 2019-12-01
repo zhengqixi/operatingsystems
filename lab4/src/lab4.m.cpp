@@ -1,6 +1,7 @@
 #include "fifo.h"
 #include "scheduler.h"
 #include "simulation.h"
+#include "srtf.h"
 #include <fstream>
 #include <iostream>
 #include <unistd.h>
@@ -17,6 +18,7 @@ int main(int argc, char* argv[])
                 scheduler = new Fifo();
                 break;
             case 'j':
+                scheduler = new SRTF();
                 break;
             case 's':
                 break;

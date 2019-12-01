@@ -2,7 +2,7 @@
 #include "request.h"
 namespace NYU {
 namespace OperatingSystems {
-    Request* Fifo::getRequest(unsigned int headPosition)
+    Request* Fifo::getRequest()
     {
         auto ptr = d_queue.front();
         d_queue.pop();
