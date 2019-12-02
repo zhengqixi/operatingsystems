@@ -13,6 +13,9 @@ namespace OperatingSystems {
             [lastPosition](const Request* const a, const Request* const b) {
                 unsigned int differenceA = a->track() > lastPosition ? a->track() - lastPosition : lastPosition - a->track();
                 unsigned int differenceB = b->track() > lastPosition ? b->track() - lastPosition : lastPosition - b->track();
+                if (differenceA == differenceB) {
+                    return a->arriveTime() < b->arriveTime();
+                }
                 return differenceA < differenceB;
             });
         d_queue.erase(iter);
