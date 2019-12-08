@@ -1,7 +1,11 @@
-all: lab4.m.cpp simulation.o scheduler.o request.o fifo.o srtf.o
+all: lab4.m.cpp simulation.o scheduler.o request.o fifo.o srtf.o lookbase.o look.o
 	g++ -o iosched lab4.m.cpp *.o
 debug:
 	g++ -ggdb -o iosched *.cpp *.h
+look.o: look.h look.cpp lookbase.h
+	g++ -c look.h look.cpp
+lookbase.o: lookbase.h lookbase.cpp simulation.h
+	g++ -c lookbase.h lookbase.cpp
 srtf.o: srtf.h srtf.cpp simulation.h
 	g++ -c srtf.h srtf.cpp
 fifo.o: fifo.h fifo.cpp simulation.h

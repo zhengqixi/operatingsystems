@@ -1,4 +1,5 @@
 #include "fifo.h"
+#include "look.h"
 #include "scheduler.h"
 #include "simulation.h"
 #include "srtf.h"
@@ -21,6 +22,7 @@ int main(int argc, char* argv[])
                 scheduler = new SRTF();
                 break;
             case 's':
+                scheduler = new Look();
                 break;
             case 'c':
                 break;
