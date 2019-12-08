@@ -1,3 +1,4 @@
+#include "clook.h"
 #include "fifo.h"
 #include "flook.h"
 #include "look.h"
@@ -26,6 +27,7 @@ int main(int argc, char* argv[])
                 scheduler = new Look();
                 break;
             case 'c':
+                scheduler = new CLook();
                 break;
             case 'f':
                 scheduler = new FLook();
