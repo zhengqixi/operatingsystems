@@ -1,4 +1,5 @@
 #include "fifo.h"
+#include "flook.h"
 #include "look.h"
 #include "scheduler.h"
 #include "simulation.h"
@@ -27,6 +28,7 @@ int main(int argc, char* argv[])
             case 'c':
                 break;
             case 'f':
+                scheduler = new FLook();
                 break;
             default:
                 std::cerr << "Unkown scheduler\n";
